@@ -60,7 +60,7 @@ export default function AdminPanel() {
     }
   }
 
-  const viewUserHistory = async (user) => {
+  const viewUserHistory = async (user: any) => {
     try {
       setSelectedUser(user)
       setShowHistoryModal(true)
