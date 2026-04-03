@@ -106,3 +106,13 @@ if __name__ == "__main__":
         port=8000,
         reload=False
     )
+
+# ==========================================
+# Vercel Serverless Handler (Zaroori Hai)
+# ==========================================
+try:
+    from mangum import Mangum
+    # lifespan="off" is important for serverless
+    handler = Mangum(app, lifespan="off")
+except Exception:
+    pass

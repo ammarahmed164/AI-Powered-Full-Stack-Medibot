@@ -23,3 +23,6 @@ httpx==0.26.0  # For API calls
 
 # Utilities
 python-dateutil==2.8.2
+
+# Vercel Deployment
+mangum
