@@ -1,13 +1,8 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
-import { login } from '../store/slices/authSlice'
-import { AppDispatch } from '../store/store'
+import { Link } from 'react-router-dom'
 import './Auth.css'
 
 export default function Login() {
-  const dispatch = useDispatch<AppDispatch>()
-  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     email: '',
     password: '',

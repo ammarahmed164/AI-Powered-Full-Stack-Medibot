@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { sendMessage, clearMessages } from '../store/slices/chatSlice'
+import { sendMessage } from '../store/slices/chatSlice'
 import { AppDispatch, RootState } from '../store/store'
 import './Chat.css'
 
@@ -11,10 +11,6 @@ export default function Chat() {
   const [isUploading, setIsUploading] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
-
-  const scrollToBottom = () => {
-    // Auto-scroll disabled - user controls scroll position
-  }
 
   useEffect(() => {
     // Auto-scroll disabled
@@ -100,7 +96,7 @@ export default function Chat() {
     if (!text) return []
 
     const sections = text.split('\n\n')
-    return sections.map((section, index) => {
+    return sections.map((section) => {
       // Check for bold heading
       const boldMatch = section.match(/\*\*(.+?)\*\*(.*)/s)
       if (boldMatch) {
@@ -188,9 +184,9 @@ export default function Chat() {
                             {section.type === 'bold-heading' && (
                               <>
                                 <strong className="section-heading">{section.heading}</strong>
-                                {section.content.startsWith('-') ? (
+                                {section.content?.startsWith('-') ? (
                                   <ul className="parsed-list">
-                                    {section.content.split('\n').filter(line => line.startsWith('-')).map((line, i) => (
+                                    {section.content?.split('\n').filter(line => line.startsWith('-')).map((line, i) => (
                                       <li key={i}>{line.replace('- ', '').trim()}</li>
                                     ))}
                                   </ul>
@@ -201,7 +197,7 @@ export default function Chat() {
                             )}
                             {section.type === 'list' && (
                               <ul className="parsed-list">
-                                {section.items.map((item, i) => (
+                                {section.items?.map((item, i) => (
                                   <li key={i}>{item}</li>
                                 ))}
                               </ul>

@@ -7,7 +7,7 @@ export default function AdminPanel() {
   const [stats, setStats] = useState({ total_users: 0, total_consultations: 0, active_users: 0 })
   const [loading, setLoading] = useState(true)
   const [selectedUser, setSelectedUser] = useState(null)
-  const [userHistory, setUserHistory] = useState([])
+  const [userHistory, setUserHistory] = useState<any[]>([])
   const [searchTerm, setSearchTerm] = useState('')
   const [showHistoryModal, setShowHistoryModal] = useState(false)
 

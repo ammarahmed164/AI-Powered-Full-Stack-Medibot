@@ -79,7 +79,7 @@ export const sendMessage = createAsyncThunk(
         try {
           // Map messages for History API (Backend expects 'sender_type', not 'type')
           const historyMessages = [
-            ...conversationHistory.map(msg => ({
+            ...conversationHistory.map((msg: any) => ({
               sender_type: msg.type,
               content: msg.content
             })),
@@ -181,7 +181,7 @@ const chatSlice = createSlice({
         state.error = action.payload
       })
       // Get History
-      .addCase(getChatHistory.fulfilled, (state, action) => {
+      .addCase(getChatHistory.fulfilled, () => {
         // Handle history loading if needed
       })
   },

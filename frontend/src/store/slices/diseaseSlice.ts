@@ -17,7 +17,7 @@ const initialState: DiseaseState = {
 
 export const fetchDiseases = createAsyncThunk(
   'disease/fetchDiseases',
-  async (params?: any, { rejectWithValue }) => {
+  async (params: any, { rejectWithValue }) => {
     try {
       const response = await diseaseAPI.list(params)
       return response.data
