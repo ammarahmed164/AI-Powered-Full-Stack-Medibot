@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom'
 
 export default function AdminPanel() {
   const navigate = useNavigate()
-  const [users, setUsers] = useState([])
+  const [users, setUsers] = useState<any[]>([])
   const [stats, setStats] = useState({ total_users: 0, total_consultations: 0, active_users: 0 })
   const [loading, setLoading] = useState(true)
-  const [selectedUser, setSelectedUser] = useState(null)
+  const [selectedUser, setSelectedUser] = useState<any>(null)
   const [userHistory, setUserHistory] = useState<any[]>([])
   const [searchTerm, setSearchTerm] = useState('')
   const [showHistoryModal, setShowHistoryModal] = useState(false)

@@ -8,7 +8,7 @@ import './Layout.css'
 export default function Layout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const [hoveredLink, setHoveredLink] = useState(null)
+  const [hoveredLink, setHoveredLink] = useState<string | null>(null)
   const { isAuthenticated, user } = useSelector((state: RootState) => state.auth)
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
