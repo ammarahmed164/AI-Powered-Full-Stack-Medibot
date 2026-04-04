@@ -66,6 +66,7 @@ export default function AdminPanel() {
       setSelectedUser(user)
       setShowHistoryModal(true)
       
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1';
       const response = await fetch(`${apiUrl}/history/sessions/${user.id}`)
       if (response.ok) {
         const data = await response.json()
