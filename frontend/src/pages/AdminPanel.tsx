@@ -25,7 +25,8 @@ export default function AdminPanel() {
       const adminToken = localStorage.getItem('admin_token')
       
       // Load users
-      const usersResponse = await fetch('http://localhost:8000/api/v1/users/', {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1';
+      const usersResponse = await fetch(`${apiUrl}/users/`, {
         headers: { 'Authorization': `Bearer ${adminToken}` },
       })
 
@@ -45,7 +46,7 @@ export default function AdminPanel() {
       }
 
       // Load dashboard stats
-      const statsResponse = await fetch('http://localhost:8000/api/v1/dashboard/stats')
+      const statsResponse = await fetch(`${apiUrl}/dashboard/stats`)
       if (statsResponse.ok) {
         const statsData = await statsResponse.json()
         setStats(prev => ({
@@ -65,7 +66,7 @@ export default function AdminPanel() {
       setSelectedUser(user)
       setShowHistoryModal(true)
       
-      const response = await fetch(`http://localhost:8000/api/v1/history/sessions/${user.id}`)
+      const response = await fetch(`${apiUrl}/history/sessions/${user.id}`)
       if (response.ok) {
         const data = await response.json()
         setUserHistory(data.sessions || [])

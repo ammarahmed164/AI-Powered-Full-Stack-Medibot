@@ -40,7 +40,8 @@ export default function Chat() {
       formData.append('user_id', 'current-user-id') // Replace with actual user ID
       formData.append('report_type', 'Medical Report')
 
-      const response = await fetch('http://localhost:8000/api/v1/upload/upload-report', {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1';
+      const response = await fetch(`${apiUrl}/upload/upload-report`, {
         method: 'POST',
         body: formData
       })

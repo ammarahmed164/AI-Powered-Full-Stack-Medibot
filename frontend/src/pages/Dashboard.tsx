@@ -42,7 +42,8 @@ export default function Dashboard() {
       }
 
       // 2. Fetch user's sessions
-      const response = await fetch(`http://localhost:8000/api/v1/history/sessions/${userId}`)
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1';
+      const response = await fetch(`${apiUrl}/history/sessions/${userId}`)
       console.log('📡 Dashboard: API Response Status:', response.status)
       
       if (response.ok) {
