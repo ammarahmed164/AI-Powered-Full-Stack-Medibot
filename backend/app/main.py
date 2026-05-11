@@ -24,19 +24,19 @@ async def lifespan(app: FastAPI):
     """Application lifespan manager"""
     # Startup
     print("\n" + "="*60)
-    print("  🚀 MediBot API Starting...")
+    print("  MediBot API Starting...")
     print("="*60)
     print("\n  Services:")
-    print("    ✅ Authentication")
-    print("    ✅ NLP Chatbot")
-    print("    ✅ Supabase Database")
+    print("    [OK] Authentication")
+    print("    [OK] NLP Chatbot")
+    print("    [OK] Supabase Database")
     print("\n  Endpoints:")
     print("    http://localhost:8000")
     print("    http://localhost:8000/docs")
     print("\n" + "="*60 + "\n")
     yield
     # Shutdown
-    print("\n👋 MediBot API Shutting Down...\n")
+    print("\n MediBot API Shutting Down...\n")
 
 # -------------------------------------------
 # FastAPI Application

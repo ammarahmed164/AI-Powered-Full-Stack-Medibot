@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { authAPI } from '../services/api'
+import MediBotLogo from '../components/MediBotLogo'
 
 export default function AdminLogin() {
   const navigate = useNavigate()
@@ -45,7 +46,9 @@ export default function AdminLogin() {
       <div className="admin-login-container">
         <div className="admin-login-card">
           <div className="admin-login-header">
-            <div className="admin-login-icon">👨‍💼</div>
+            <div className="admin-login-brand">
+              <MediBotLogo size="auth" />
+            </div>
             <h1 className="admin-login-title">Admin Portal</h1>
             <p className="admin-login-subtitle">Secure access to MediBot Dashboard</p>
           </div>
@@ -105,7 +108,8 @@ export default function AdminLogin() {
         .admin-login-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
         
         .admin-login-header { text-align: center; margin-bottom: 35px; }
-        .admin-login-icon { font-size: 3.5rem; margin-bottom: 15px; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3)); }
+        .admin-login-brand { margin-bottom: 15px; display: flex; justify-content: center; align-items: center; }
+        .admin-login-brand img { max-width: 200px; width: 100%; height: auto; filter: drop-shadow(0 6px 18px rgba(0,0,0,0.35)); }
         .admin-login-title { font-size: 2.25rem; font-weight: 800; color: #ffffff; margin: 0 0 10px 0; letter-spacing: -0.5px; }
         .admin-login-subtitle { color: #94a3b8; margin: 0; font-size: 1rem; }
         

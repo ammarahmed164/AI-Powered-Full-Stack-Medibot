@@ -81,7 +81,7 @@ async def chat_with_bot(data: ChatMessage):
         )
         
     except Exception as e:
-        print(f"❌ AI Error: {str(e)}")
+        print(f"[ERROR] AI Error: {str(e)}")
         import traceback
         traceback.print_exc()
         raise HTTPException(

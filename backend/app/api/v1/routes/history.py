@@ -36,6 +36,10 @@ async def save_session(session: ChatSession):
     print(f"User ID: {session.user_id}")
     print(f"Session Name: {session.session_name}")
     print(f"Messages: {len(session.messages)}")
+
+    if not SUPABASE_URL or not SUPABASE_KEY:
+        print("⚠️ Supabase not configured — skipping chat history persist (chat still works).")
+        return {"success": False, "skipped": True, "reason": "history_backend_not_configured"}
     
     try:
         headers = {

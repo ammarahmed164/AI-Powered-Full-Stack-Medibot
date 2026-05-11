@@ -143,19 +143,21 @@
 }
 
 .hero-logo-3d {
-  width: 150px;
-  height: 150px;
+  width: auto;
+  max-width: min(100%, 320px);
+  min-height: unset;
+  height: auto;
+  margin: 0 auto;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 0.25rem 0;
 }
 
-.logo-main {
-  font-size: 5rem;
-  position: relative;
-  z-index: 2;
-  filter: drop-shadow(0 10px 30px rgba(0,0,0,0.3));
+.hero-logo-3d .medibot-logo-3d {
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .logo-glow {

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import MediBotLogo from '../components/MediBotLogo'
 import './Auth.css'
 
 export default function Login() {
@@ -71,7 +72,7 @@ export default function Login() {
         <div className="auth-card">
           <div className="auth-header">
             <div className="auth-logo">
-              <span>🏥</span>
+              <MediBotLogo size="auth" />
             </div>
             <h1>Welcome Back</h1>
             <p>Login to access your health dashboard</p>

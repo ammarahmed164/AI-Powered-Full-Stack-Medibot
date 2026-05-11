@@ -24,11 +24,11 @@ class GeminiClient:
         
         if not self.api_keys:
             raise ValueError("No GEMINI_API_KEYS found in .env file")
-        
-        print(f"✅ Gemini AI Loaded {len(self.api_keys)} FREE API Keys")
-        print(f"✅ Total Capacity: {len(self.api_keys) * 20} requests/day")
-        print(f"✅ Using Model: {self.model_name}")
-        print(f"✅ Auto Key Rotation: ENABLED")
+
+        print(f"[OK] Gemini AI Loaded {len(self.api_keys)} FREE API Keys")
+        print(f"[OK] Total Capacity: {len(self.api_keys) * 20} requests/day")
+        print(f"[OK] Using Model: {self.model_name}")
+        print(f"[OK] Auto Key Rotation: ENABLED")
     
     def _load_api_keys(self) -> list:
         """Load 5 API keys from environment"""
@@ -50,12 +50,12 @@ class GeminiClient:
         """Initialize Gemini client with current key"""
         if self.current_key_index >= len(self.api_keys):
             self.current_key_index = 0  # Reset to first key
-            print(f"🔄 All 5 keys exhausted, resetting to Key #1")
-        
+            print(f"[ROTATE] All 5 keys exhausted, resetting to Key #1")
+
         api_key = self.api_keys[self.current_key_index]
         genai.configure(api_key=api_key)
         self.model = genai.GenerativeModel(self.model_name)
-        print(f"✅ Using Key #{self.current_key_index + 1}")
+        print(f"[OK] Using Key #{self.current_key_index + 1}")
     
     def _try_with_rotation(self, func, *args, **kwargs):
         """Try function with current key, auto-rotate on quota error"""
@@ -69,21 +69,21 @@ class GeminiClient:
                 
                 # Check if quota exceeded
                 if "quota exceeded" in error_msg.lower() or "429" in error_msg:
-                    print(f"⚠️  Key #{self.current_key_index + 1} quota full (20/20), rotating...")
+                    print(f"[WARN] Key #{self.current_key_index + 1} quota full (20/20), rotating...")
                     self.current_key_index += 1
-                    
+
                     if self.current_key_index < len(self.api_keys):
                         self._initialize_client()
-                        print(f"✅ Switched to Key #{self.current_key_index + 1}")
+                        print(f"[OK] Switched to Key #{self.current_key_index + 1}")
                         continue
                     else:
                         # All 5 keys exhausted
-                        print(f"❌ All 5 API keys quota exceeded (100/100 requests used)")
-                        print(f"⏰ Wait 24 hours for reset, or add more keys")
+                        print(f"[ERROR] All 5 API keys quota exceeded (100/100 requests used)")
+                        print(f"[WAIT] Wait 24 hours for reset, or add more keys")
                         raise Exception("All 5 API keys quota exceeded. Please wait 24 hours for reset.")
                 else:
                     # Different error, re-raise
-                    print(f"❌ Error: {error_msg[:100]}")
+                    print(f"[ERROR] Error: {error_msg[:100]}")
                     raise
         
         raise Exception("All API keys exhausted")

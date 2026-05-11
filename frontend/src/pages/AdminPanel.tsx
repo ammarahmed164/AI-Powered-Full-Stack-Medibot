@@ -1,5 +1,18 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import MediBotLogo from '../components/MediBotLogo'
+import adminSpotlightPortrait from '../assets/admin-orthopedic-spotlight.png'
+import './AdminPanel.css'
+
+const FEATURED_DOCTOR = {
+  name: 'Dr Syed Umar Rafiq',
+  title: 'Consultant Orthopedic Surgeon',
+  qualificationLine: 'MBBS · FCPS',
+  bio: 'Orthopedic consultation focus: bone and joint care, post-injury recovery, and evidence-guided treatment planning for every patient.',
+  experienceYears: 12,
+  hospital: 'MediCare Orthopedic & Trauma Center',
+  availability: 'Mon – Sat, 10:00 AM – 7:00 PM',
+}
 
 export default function AdminPanel() {
   const navigate = useNavigate()
@@ -8,8 +21,11 @@ export default function AdminPanel() {
   const [loading, setLoading] = useState(true)
   const [selectedUser, setSelectedUser] = useState<any>(null)
   const [userHistory, setUserHistory] = useState<any[]>([])
+  const [selectedSession, setSelectedSession] = useState<any>(null)
+  const [sessionMessages, setSessionMessages] = useState<any[]>([])
   const [searchTerm, setSearchTerm] = useState('')
   const [showHistoryModal, setShowHistoryModal] = useState(false)
+  const [loadingMessages, setLoadingMessages] = useState(false)
 
   useEffect(() => {
     const adminToken = localStorage.getItem('admin_token')
@@ -23,39 +39,31 @@ export default function AdminPanel() {
   const loadData = async () => {
     try {
       const adminToken = localStorage.getItem('admin_token')
-      
-      // Load users
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1';
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1'
       const usersResponse = await fetch(`${apiUrl}/users/`, {
-        headers: { 'Authorization': `Bearer ${adminToken}` },
+        headers: { Authorization: `Bearer ${adminToken}` },
       })
 
       if (usersResponse.ok) {
         const usersData = await usersResponse.json()
-        console.log('✅ Users loaded:', usersData)
         setUsers(usersData)
-        
-        // Update stats
         setStats({
           total_users: usersData.length,
           active_users: usersData.filter((u: any) => u.is_active).length,
-          total_consultations: 0 
+          total_consultations: 0,
         })
-      } else {
-        console.error('❌ Failed to load users:', usersResponse.status, await usersResponse.text())
       }
 
-      // Load dashboard stats
       const statsResponse = await fetch(`${apiUrl}/dashboard/stats`)
       if (statsResponse.ok) {
         const statsData = await statsResponse.json()
-        setStats(prev => ({
+        setStats((prev) => ({
           ...prev,
-          total_consultations: statsData.total_consultations || 0
+          total_consultations: statsData.total_consultations || 0,
         }))
       }
     } catch (error) {
-      console.error('❌ Failed to load data:', error)
+      console.error('Failed to load admin data:', error)
     } finally {
       setLoading(false)
     }
@@ -65,8 +73,10 @@ export default function AdminPanel() {
     try {
       setSelectedUser(user)
       setShowHistoryModal(true)
-      
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1';
+      setSelectedSession(null)
+      setSessionMessages([])
+
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1'
       const response = await fetch(`${apiUrl}/history/sessions/${user.id}`)
       if (response.ok) {
         const data = await response.json()
@@ -77,125 +87,246 @@ export default function AdminPanel() {
     }
   }
 
+  const viewSessionMessages = async (session: any) => {
+    try {
+      setSelectedSession(session)
+      setLoadingMessages(true)
+
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1'
+      const response = await fetch(`${apiUrl}/history/sessions/${session.id}/messages`)
+
+      if (response.ok) {
+        const data = await response.json()
+        const mappedMessages = (data.messages || []).map((msg: any) => ({
+          sender: msg.sender_type,
+          content: msg.content,
+          timestamp: msg.created_at,
+        }))
+        setSessionMessages(mappedMessages)
+      }
+    } catch (error) {
+      console.error('Failed to load session messages:', error)
+      setSessionMessages([])
+    } finally {
+      setLoadingMessages(false)
+    }
+  }
+
   const handleLogout = () => {
     localStorage.removeItem('admin_token')
     localStorage.removeItem('user_role')
     navigate('/admin-login')
   }
 
-  const filteredUsers = users.filter(user => 
-    user.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.email?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredUsers = users.filter(
+    (user) =>
+      user.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email?.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
   return (
-    <div className="admin-panel">
-      {/* Animated Background */}
-      <div className="admin-bg">
-        <div className="bg-orb orb-1"></div>
-        <div className="bg-orb orb-2"></div>
-        <div className="bg-orb orb-3"></div>
-      </div>
+    <div className="admin-simple" role="main">
+      <div className="admin-simple-bg" aria-hidden="true" />
+      <div className="admin-mesh" aria-hidden="true" />
+      <div className="admin-orb admin-orb-1" aria-hidden="true" />
+      <div className="admin-orb admin-orb-2" aria-hidden="true" />
+      <div className="admin-orb admin-orb-3" aria-hidden="true" />
 
-      <div className="admin-content">
-        {/* Header */}
-        <div className="admin-header">
-          <div>
-            <h1 className="admin-title">Admin Dashboard</h1>
-            <p className="admin-subtitle">Manage users and view consultations</p>
+      <div className="admin-simple-inner admin-simple-inner--wide">
+        <header className="admin-simple-top admin-top-glass">
+          <div className="admin-simple-brand">
+            <div className="admin-simple-logo" aria-hidden="true">
+              <MediBotLogo size="admin" alt="" />
+            </div>
+            <div>
+              <div className="admin-title-row">
+                <h1>
+                  <span className="admin-title-main">MediBot</span>
+                  <span className="admin-title-accent"> Admin</span>
+                </h1>
+                <span className="admin-live-pill" title="Dashboard connected">
+                  <span className="admin-live-dot" aria-hidden="true" />
+                  Live
+                </span>
+              </div>
+              <p>Physician spotlight · metrics pulse · patient intelligence</p>
+            </div>
           </div>
-          <button className="btn-logout" onClick={handleLogout}>
-            <span>🚪</span> Sign Out
+          <button
+            type="button"
+            className="btn-admin-logout"
+            onClick={handleLogout}
+            aria-label="Sign out from admin panel"
+          >
+            <span className="btn-admin-logout-glow" aria-hidden="true" />
+            Sign out
           </button>
+        </header>
+
+        <div className="admin-hero">
+          <section className="doctor-showcase doctor-showcase--hero admin-reveal admin-reveal--1" aria-labelledby="doctor-showcase-heading">
+            <article className="doctor-premium-card doctor-premium-card--with-photo">
+              <div className="doctor-premium-card__glow" aria-hidden />
+              <div className="doctor-premium-card__visual">
+                <div className="doctor-premium-photo-stage" aria-hidden="true">
+                  <div className="doctor-premium-photo-ring" />
+                  <img
+                    src={adminSpotlightPortrait}
+                    alt={`${FEATURED_DOCTOR.name}, ${FEATURED_DOCTOR.title}`}
+                    className="doctor-premium-photo"
+                    width={560}
+                    height={700}
+                    loading="eager"
+                    decoding="async"
+                    draggable={false}
+                  />
+                </div>
+                <span className="doctor-premium-visual-chip">Physician spotlight</span>
+              </div>
+              <div className="doctor-premium-card__body">
+                <h2 id="doctor-showcase-heading" className="doctor-premium-name">
+                  {FEATURED_DOCTOR.name}
+                </h2>
+                <p className="doctor-premium-badge">{FEATURED_DOCTOR.title}</p>
+                <p className="doctor-premium-quals">{FEATURED_DOCTOR.qualificationLine}</p>
+                <p className="doctor-premium-bio">{FEATURED_DOCTOR.bio}</p>
+                <dl className="doctor-premium-meta">
+                  <div>
+                    <dt>Experience</dt>
+                    <dd>{FEATURED_DOCTOR.experienceYears}+ years</dd>
+                  </div>
+                  <div>
+                    <dt>Hospital</dt>
+                    <dd>{FEATURED_DOCTOR.hospital}</dd>
+                  </div>
+                  <div>
+                    <dt>Availability</dt>
+                    <dd>{FEATURED_DOCTOR.availability}</dd>
+                  </div>
+                </dl>
+              </div>
+            </article>
+          </section>
+
+          <div className="admin-stats-wrap admin-reveal admin-reveal--2" role="region" aria-label="Platform statistics">
+            <div className="admin-stats-head-row">
+              <h2 className="admin-stats-heading">Pulse board</h2>
+              <span className="admin-stats-hint">Real-time</span>
+            </div>
+            <div className="admin-stats-grid">
+              <div className="admin-stat-card admin-stat-card--purple">
+                <div className="admin-stat-icon" aria-hidden="true">
+                  👥
+                </div>
+                <div>
+                  <span className="admin-stat-label">Total users</span>
+                  <span className="admin-stat-value">{loading ? '—' : stats.total_users}</span>
+                </div>
+              </div>
+              <div className="admin-stat-card admin-stat-card--green">
+                <div className="admin-stat-icon" aria-hidden="true">
+                  ✅
+                </div>
+                <div>
+                  <span className="admin-stat-label">Active users</span>
+                  <span className="admin-stat-value">{loading ? '—' : stats.active_users}</span>
+                </div>
+              </div>
+              <div className="admin-stat-card admin-stat-card--blue">
+                <div className="admin-stat-icon" aria-hidden="true">
+                  💬
+                </div>
+                <div>
+                  <span className="admin-stat-label">Consultations</span>
+                  <span className="admin-stat-value">{loading ? '—' : stats.total_consultations}</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Stats Cards */}
-        <div className="admin-stats">
-          <div className="stat-card purple">
-            <div className="stat-icon">👥</div>
-            <div className="stat-info">
-              <span className="stat-label">Total Users</span>
-              <span className="stat-value">{loading ? '-' : stats.total_users}</span>
+        <section className="admin-users-shell admin-reveal admin-reveal--3" aria-label="Registered users">
+          <div className="admin-users-shell-accent" aria-hidden="true" />
+          <div className="admin-users-head">
+            <div>
+              <span className="admin-section-chip">Directory</span>
+              <h2 className="admin-users-title">Patient intelligence</h2>
+              <p className="admin-users-sub">Search the roster, inspect status, open encrypted chat history</p>
             </div>
-          </div>
-
-          <div className="stat-card green">
-            <div className="stat-icon">✅</div>
-            <div className="stat-info">
-              <span className="stat-label">Active Users</span>
-              <span className="stat-value">{loading ? '-' : stats.active_users}</span>
+            <div className="admin-search-wrap">
+              <span className="admin-search-icon" aria-hidden="true">
+                ⌕
+              </span>
+              <label htmlFor="admin-user-search" className="sr-only">
+                Search users
+              </label>
+              <input
+                id="admin-user-search"
+                type="search"
+                className="admin-search-input"
+                placeholder="Name or email…"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                aria-label="Search users by name or email"
+              />
             </div>
-          </div>
-
-          <div className="stat-card blue">
-            <div className="stat-icon">💬</div>
-            <div className="stat-info">
-              <span className="stat-label">Total Consultations</span>
-              <span className="stat-value">{loading ? '-' : stats.total_consultations}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Users Table */}
-        <div className="users-section">
-          <div className="section-header">
-            <h2 className="section-title">Registered Users</h2>
-            <input
-              type="text"
-              className="search-input"
-              placeholder="🔍 Search users..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
           </div>
 
           {loading ? (
-            <div className="loading-state">
-              <div className="spinner"></div>
-              <p>Loading users...</p>
+            <div className="admin-loading" role="status" aria-live="polite">
+              <div className="admin-spinner" aria-hidden="true" />
+              <p>Loading users…</p>
             </div>
           ) : filteredUsers.length === 0 ? (
-            <div className="empty-state">
-              <div className="empty-icon">👥</div>
+            <div className="admin-empty" role="status">
+              <span className="admin-empty-icon" aria-hidden="true">
+                👥
+              </span>
               <h3>No users found</h3>
-              <p>Users will appear here once they register</p>
+              <p>Try another search or check back after new registrations.</p>
             </div>
           ) : (
-            <div className="users-table-wrapper">
-              <table className="users-table">
+            <div className="admin-table-scroll">
+              <table className="admin-users-table">
                 <thead>
                   <tr>
-                    <th>User</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Status</th>
-                    <th>Registered</th>
-                    <th>Actions</th>
+                    <th scope="col">User</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Phone</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Registered</th>
+                    <th scope="col">Timeline</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredUsers.map((user, index) => (
-                    <tr key={index} className="user-row">
-                      <td className="user-cell">
-                        <div className="user-avatar">
-                          {(user.full_name || 'U')[0].toUpperCase()}
-                        </div>
-                        <span className="user-name">{user.full_name || 'User'}</span>
-                      </td>
-                      <td className="email-cell">{user.email}</td>
-                      <td>{user.phone_number || 'N/A'}</td>
+                    <tr key={user.id ?? index}>
                       <td>
-                        <span className={`status-badge ${user.is_active ? 'active' : 'inactive'}`}>
-                          {user.is_active ? '● Active' : '○ Inactive'}
+                        <div className="admin-user-cell">
+                          <span className="admin-user-avatar" aria-hidden="true">
+                            {(user.full_name || 'U')[0].toUpperCase()}
+                          </span>
+                          <span className="admin-user-name">{user.full_name || 'User'}</span>
+                        </div>
+                      </td>
+                      <td className="admin-td-muted">{user.email}</td>
+                      <td>{user.phone_number || '—'}</td>
+                      <td>
+                        <span className={`admin-status ${user.is_active ? 'is-active' : 'is-inactive'}`}>
+                          {user.is_active ? 'Active' : 'Inactive'}
                         </span>
                       </td>
-                      <td>{new Date(user.created_at).toLocaleDateString()}</td>
+                      <td className="admin-td-muted">
+                        {user.created_at ? new Date(user.created_at).toLocaleDateString() : '—'}
+                      </td>
                       <td>
-                        <button 
-                          className="btn-view-history"
+                        <button
+                          type="button"
+                          className="admin-btn-history"
                           onClick={() => viewUserHistory(user)}
+                          aria-label={`View consultation history for ${user.full_name || 'user'}`}
                         >
-                          📜 View History
+                          <span className="admin-btn-history-inner">Timeline</span>
                         </button>
                       </td>
                     </tr>
@@ -204,35 +335,110 @@ export default function AdminPanel() {
               </table>
             </div>
           )}
-        </div>
+        </section>
       </div>
 
-      {/* History Modal */}
       {showHistoryModal && selectedUser && (
-        <div className="modal-overlay" onClick={() => setShowHistoryModal(false)}>
-          <div className="history-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
+        <div
+          className="admin-modal-overlay"
+          onClick={() => {
+            setShowHistoryModal(false)
+            setSelectedSession(null)
+            setSessionMessages([])
+          }}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="history-modal-title"
+        >
+          <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="admin-modal-head">
               <div>
-                <h2>{selectedUser.full_name}'s History</h2>
-                <p className="modal-email">{selectedUser.email}</p>
+                <h2 id="history-modal-title">
+                  {selectedSession ? selectedSession.session_name : `${selectedUser.full_name}'s history`}
+                </h2>
+                <p className="admin-modal-email">{selectedUser.email}</p>
               </div>
-              <button className="modal-close" onClick={() => setShowHistoryModal(false)}>×</button>
+              <button
+                type="button"
+                className="admin-modal-close"
+                onClick={() => {
+                  if (selectedSession) {
+                    setSelectedSession(null)
+                    setSessionMessages([])
+                  } else {
+                    setShowHistoryModal(false)
+                  }
+                }}
+                aria-label={selectedSession ? 'Back to sessions' : 'Close'}
+              >
+                {selectedSession ? '←' : '×'}
+              </button>
             </div>
-
-            <div className="modal-body">
-              {userHistory.length === 0 ? (
-                <div className="empty-history">
-                  <div className="empty-icon">📭</div>
-                  <p>No consultation history found</p>
+            <div className="admin-modal-body">
+              {!selectedSession ? (
+                userHistory.length === 0 ? (
+                  <div className="admin-modal-empty">
+                    <p>No consultation sessions yet.</p>
+                  </div>
+                ) : (
+                  <ul className="admin-session-list">
+                    {userHistory.map((session) => (
+                      <li key={session.id}>
+                        <button
+                          type="button"
+                          className="admin-session-item"
+                          onClick={() => viewSessionMessages(session)}
+                        >
+                          <span className="admin-session-icon" aria-hidden="true">
+                            💬
+                          </span>
+                          <span className="admin-session-info">
+                            <span className="admin-session-name">{session.session_name}</span>
+                            <time dateTime={session.created_at}>
+                              {new Date(session.created_at).toLocaleString(undefined, {
+                                dateStyle: 'medium',
+                                timeStyle: 'short',
+                              })}
+                            </time>
+                          </span>
+                          <span className="admin-session-arrow" aria-hidden="true">
+                            →
+                          </span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )
+              ) : loadingMessages ? (
+                <div className="admin-modal-loading">
+                  <div className="admin-spinner" aria-hidden="true" />
+                  <p>Loading conversation…</p>
+                </div>
+              ) : sessionMessages.length === 0 ? (
+                <div className="admin-modal-empty">
+                  <p>No messages in this session.</p>
                 </div>
               ) : (
-                <div className="history-list">
-                  {userHistory.map((session) => (
-                    <div key={session.id} className="history-item">
-                      <div className="history-icon">💬</div>
-                      <div className="history-info">
-                        <h4>{session.session_name}</h4>
-                        <p>{new Date(session.created_at).toLocaleString()}</p>
+                <div className="admin-chat-thread">
+                  {sessionMessages.map((message, index) => (
+                    <div
+                      key={index}
+                      className={`admin-chat-row ${message.sender === 'user' ? 'from-user' : 'from-bot'}`}
+                    >
+                      <span className="admin-chat-avatar" aria-hidden="true">
+                        {message.sender === 'user' ? '👤' : '🤖'}
+                      </span>
+                      <div className="admin-chat-bubble">
+                        <span className="admin-chat-label">
+                          {message.sender === 'user' ? 'Patient' : 'MediBot'}
+                        </span>
+                        <p className="admin-chat-text">{message.content}</p>
+                        <time className="admin-chat-time">
+                          {new Date(message.timestamp).toLocaleTimeString(undefined, {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
+                        </time>
                       </div>
                     </div>
                   ))}
@@ -242,499 +448,6 @@ export default function AdminPanel() {
           </div>
         </div>
       )}
-
-      <style>{`
-        .admin-panel {
-          min-height: 100vh;
-          background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
-          position: relative;
-          overflow: hidden;
-        }
-
-        .admin-bg {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          pointer-events: none;
-        }
-
-        .bg-orb {
-          position: absolute;
-          border-radius: 50%;
-          filter: blur(100px);
-          opacity: 0.3;
-          animation: orbFloat 20s ease-in-out infinite;
-        }
-
-        .orb-1 {
-          width: 500px;
-          height: 500px;
-          background: #667eea;
-          top: -150px;
-          right: -150px;
-        }
-
-        .orb-2 {
-          width: 400px;
-          height: 400px;
-          background: #764ba2;
-          bottom: -100px;
-          left: -100px;
-          animation-delay: 5s;
-        }
-
-        .orb-3 {
-          width: 350px;
-          height: 350px;
-          background: #fbbf24;
-          top: 50%;
-          left: 50%;
-          animation-delay: 10s;
-        }
-
-        @keyframes orbFloat {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          50% { transform: translate(40px, -40px) scale(1.15); }
-        }
-
-        .admin-content {
-          position: relative;
-          z-index: 1;
-          max-width: 1600px;
-          margin: 0 auto;
-          padding: 40px 20px;
-        }
-
-        .admin-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 40px;
-          flex-wrap: wrap;
-          gap: 20px;
-        }
-
-        .admin-title {
-          font-size: 2.75rem;
-          font-weight: 800;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-          margin: 0 0 10px 0;
-        }
-
-        .admin-subtitle {
-          color: #94a3b8;
-          font-size: 1.1rem;
-          margin: 0;
-        }
-
-        .btn-logout {
-          display: inline-flex;
-          align-items: center;
-          gap: 10px;
-          padding: 14px 28px;
-          background: rgba(239, 68, 68, 0.15);
-          border: 2px solid #ef4444;
-          color: #ef4444;
-          border-radius: 14px;
-          font-weight: 700;
-          font-size: 1rem;
-          cursor: pointer;
-          transition: all 0.3s ease;
-        }
-
-        .btn-logout:hover {
-          background: #ef4444;
-          color: white;
-          transform: translateY(-3px);
-          box-shadow: 0 10px 30px rgba(239, 68, 68, 0.4);
-        }
-
-        .admin-stats {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-          gap: 24px;
-          margin-bottom: 50px;
-        }
-
-        .stat-card {
-          background: rgba(255, 255, 255, 0.05);
-          backdrop-filter: blur(20px);
-          border-radius: 20px;
-          padding: 28px;
-          display: flex;
-          align-items: center;
-          gap: 20px;
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .stat-card:hover {
-          transform: translateY(-8px);
-          background: rgba(255, 255, 255, 0.08);
-          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
-
-        .stat-card.purple .stat-icon { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-        .stat-card.green .stat-icon { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
-        .stat-card.blue .stat-icon { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); }
-
-        .stat-icon {
-          width: 70px;
-          height: 70px;
-          border-radius: 18px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 2rem;
-          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .stat-info {
-          display: flex;
-          flex-direction: column;
-        }
-
-        .stat-label {
-          color: #94a3b8;
-          font-size: 0.9rem;
-          font-weight: 600;
-          margin-bottom: 8px;
-        }
-
-        .stat-value {
-          font-size: 2.5rem;
-          font-weight: 800;
-          color: white;
-          line-height: 1;
-        }
-
-        .users-section {
-          background: rgba(255, 255, 255, 0.05);
-          backdrop-filter: blur(20px);
-          border-radius: 24px;
-          padding: 32px;
-          border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .section-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 30px;
-          flex-wrap: wrap;
-          gap: 20px;
-        }
-
-        .section-title {
-          font-size: 1.75rem;
-          font-weight: 800;
-          color: #ffffff;
-          text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-          margin: 0;
-        }
-
-        .search-input {
-          padding: 12px 20px;
-          background: rgba(255, 255, 255, 0.1);
-          border: 2px solid rgba(255, 255, 255, 0.2);
-          border-radius: 12px;
-          color: white;
-          font-size: 1rem;
-          width: 300px;
-          transition: all 0.3s ease;
-        }
-
-        .search-input::placeholder {
-          color: #94a3b8;
-        }
-
-        .search-input:focus {
-          outline: none;
-          border-color: #667eea;
-          background: rgba(255, 255, 255, 0.15);
-        }
-
-        .loading-state, .empty-state, .empty-history {
-          text-align: center;
-          padding: 60px 20px;
-        }
-
-        .spinner {
-          width: 50px;
-          height: 50px;
-          border: 4px solid rgba(255, 255, 255, 0.1);
-          border-top: 4px solid #667eea;
-          border-radius: 50%;
-          animation: spin 1s linear infinite;
-          margin: 0 auto 20px;
-        }
-
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-
-        .loading-state p, .empty-state p, .empty-history p {
-          color: #94a3b8;
-          font-size: 1.1rem;
-        }
-
-        .empty-icon {
-          font-size: 5rem;
-          margin-bottom: 20px;
-          opacity: 0.5;
-        }
-
-        .users-table-wrapper {
-          overflow-x: auto;
-        }
-
-        .users-table {
-          width: 100%;
-          border-collapse: collapse;
-        }
-
-        .users-table thead th {
-          text-align: left;
-          padding: 16px;
-          color: #94a3b8;
-          font-size: 0.85rem;
-          font-weight: 700;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-          border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .users-table tbody tr {
-          border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-          transition: all 0.3s ease;
-        }
-
-        .users-table tbody tr:hover {
-          background: rgba(255, 255, 255, 0.05);
-        }
-
-        .users-table td {
-          padding: 16px;
-          color: #e2e8f0;
-        }
-
-        .user-cell {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-        }
-
-        .user-avatar {
-          width: 45px;
-          height: 45px;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          border-radius: 12px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-weight: 700;
-          font-size: 1.1rem;
-          color: white;
-        }
-
-        .user-name {
-          font-weight: 600;
-          color: #ffffff;
-        }
-
-        .email-cell {
-          color: #94a3b8;
-        }
-
-        .status-badge {
-          display: inline-block;
-          padding: 6px 14px;
-          border-radius: 9999px;
-          font-size: 0.85rem;
-          font-weight: 600;
-        }
-
-        .status-badge.active {
-          background: rgba(16, 185, 129, 0.2);
-          color: #10b981;
-        }
-
-        .status-badge.inactive {
-          background: rgba(239, 68, 68, 0.2);
-          color: #ef4444;
-        }
-
-        .btn-view-history {
-          padding: 8px 16px;
-          background: rgba(102, 126, 234, 0.2);
-          border: 1px solid rgba(102, 126, 234, 0.4);
-          color: #667eea;
-          border-radius: 10px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.3s ease;
-        }
-
-        .btn-view-history:hover {
-          background: #667eea;
-          color: white;
-          transform: translateY(-2px);
-          box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        /* Modal Styles */
-        .modal-overlay {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: rgba(0, 0, 0, 0.8);
-          backdrop-filter: blur(10px);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          z-index: 1000;
-          animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-
-        .history-modal {
-          background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-          border-radius: 24px;
-          max-width: 700px;
-          width: 90%;
-          max-height: 80vh;
-          overflow-y: auto;
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        @keyframes slideUp {
-          from { transform: translateY(50px); opacity: 0; }
-          to { transform: translateY(0); opacity: 1; }
-        }
-
-        .modal-header {
-          padding: 28px 32px;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        }
-
-        .modal-header h2 {
-          font-size: 1.5rem;
-          font-weight: 700;
-          color: white;
-          margin: 0 0 8px 0;
-        }
-
-        .modal-email {
-          color: #94a3b8;
-          margin: 0;
-        }
-
-        .modal-close {
-          width: 40px;
-          height: 40px;
-          background: rgba(255, 255, 255, 0.1);
-          border: none;
-          border-radius: 12px;
-          color: white;
-          font-size: 1.5rem;
-          cursor: pointer;
-          transition: all 0.3s ease;
-        }
-
-        .modal-close:hover {
-          background: #ef4444;
-          transform: rotate(90deg);
-        }
-
-        .modal-body {
-          padding: 32px;
-        }
-
-        .history-list {
-          display: flex;
-          flex-direction: column;
-          gap: 16px;
-        }
-
-        .history-item {
-          background: rgba(255, 255, 255, 0.05);
-          border-radius: 16px;
-          padding: 20px;
-          display: flex;
-          align-items: center;
-          gap: 16px;
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          transition: all 0.3s ease;
-        }
-
-        .history-item:hover {
-          background: rgba(255, 255, 255, 0.08);
-          transform: translateX(8px);
-        }
-
-        .history-icon {
-          width: 50px;
-          height: 50px;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          border-radius: 14px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 1.5rem;
-        }
-
-        .history-info h4 {
-          color: white;
-          margin: 0 0 6px 0;
-          font-weight: 600;
-        }
-
-        .history-info p {
-          color: #94a3b8;
-          margin: 0;
-          font-size: 0.9rem;
-        }
-
-        @media (max-width: 1024px) {
-          .admin-stats {
-            grid-template-columns: 1fr;
-          }
-        }
-
-        @media (max-width: 768px) {
-          .admin-title {
-            font-size: 2rem;
-          }
-
-          .search-input {
-            width: 100%;
-          }
-
-          .users-table-wrapper {
-            overflow-x: scroll;
-          }
-
-          .users-table {
-            min-width: 800px;
-          }
-        }
-      `}</style>
     </div>
   )
 }

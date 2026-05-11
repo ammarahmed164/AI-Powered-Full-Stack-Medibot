@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import MediBotLogo from '../components/MediBotLogo'
 import { sendMessage } from '../store/slices/chatSlice'
 import { AppDispatch, RootState } from '../store/store'
 import './Chat.css'
@@ -9,12 +10,34 @@ export default function Chat() {
   const { messages, isLoading } = useSelector((state: RootState) => state.chat)
   const [input, setInput] = useState('')
   const [isUploading, setIsUploading] = useState(false)
+  const messagesScrollRef = useRef<HTMLDivElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  const scrollMessagesToBottom = (smooth: boolean) => {
+    const el = messagesScrollRef.current
+    if (!el) return
+    const target = el.scrollHeight - el.clientHeight
+    if (target <= 0) return
+    el.scrollTo({
+      top: target,
+      behavior: smooth ? 'smooth' : 'auto',
+    })
+  }
+
+  // ChatGPT-style: after DOM paints new messages, typing row, or loading state — scroll container to bottom.
   useEffect(() => {
-    // Auto-scroll disabled
-  }, [messages])
+    const id = window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        scrollMessagesToBottom(true)
+      })
+    })
+    return () => window.cancelAnimationFrame(id)
+  }, [messages, isLoading, isUploading])
+
+  useEffect(() => {
+    scrollMessagesToBottom(false)
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -25,6 +48,7 @@ export default function Chat() {
   }
 
   const handleQuickSymptom = (symptom: string) => {
+    if (isLoading) return
     dispatch(sendMessage(`I have ${symptom}`))
   }
 
@@ -123,42 +147,49 @@ export default function Chat() {
 
   return (
     <div className="chat-page">
-      <div className="chat-container">
+      <div className="chat-container" role="main" aria-label="Chat interface">
         {/* Chat Header */}
-        <div className="chat-header">
+        <header className="chat-header">
           <div className="chat-header-content">
-            <div className="chat-logo">
-              <span>🤖</span>
+            <div className="chat-logo" aria-hidden="true">
+              <MediBotLogo size="chat" alt="" />
             </div>
             <div>
               <h1>MediBot Assistant</h1>
               <p>AI-Powered Healthcare Chatbot</p>
             </div>
           </div>
-          <div className="chat-status">
-            <span className="status-dot"></span>
+          <div className="chat-status" role="status" aria-live="polite">
+            <span className="status-dot" aria-hidden="true"></span>
             <span>Online</span>
           </div>
-        </div>
+        </header>
 
         {/* Messages Area */}
-        <div className="chat-messages">
+        <div
+          ref={messagesScrollRef}
+          className="chat-messages"
+          role="log"
+          aria-live="polite"
+          aria-atomic="false"
+        >
           {messages.length === 0 ? (
             <div className="chat-welcome">
-              <div className="welcome-icon">
+              <div className="welcome-icon" aria-hidden="true">
                 <span>💬</span>
               </div>
               <h2>Start a Conversation</h2>
               <p>Describe your symptoms and get instant medical guidance</p>
-              
+
               <div className="quick-symptoms">
                 <p className="quick-title">Quick Select:</p>
-                <div className="symptom-tags">
+                <div className="symptom-tags" role="group" aria-label="Quick symptom selection">
                   {['fever', 'headache', 'cough', 'cold', 'stomach pain', 'fatigue'].map((symptom) => (
                     <button
                       key={symptom}
                       onClick={() => handleQuickSymptom(symptom)}
                       className="symptom-tag"
+                      aria-label={`Select ${symptom} as symptom`}
                     >
                       + {symptom}
                     </button>
@@ -170,10 +201,12 @@ export default function Chat() {
             <div className="messages-list">
               {messages.map((message, index) => (
                 <div
-                  key={message.id || index}
+                  key={message.id || `msg-${index}`}
                   className={`message ${message.type === 'user' ? 'message-user' : 'message-bot'}`}
+                  role="article"
+                  aria-label={`${message.type === 'user' ? 'Your message' : 'Bot response'}`}
                 >
-                  <div className="message-avatar">
+                  <div className="message-avatar" aria-hidden="true">
                     {message.type === 'user' ? '👤' : '🤖'}
                   </div>
                   <div className="message-content">
@@ -271,22 +304,32 @@ export default function Chat() {
           
           {/* Typing Indicator */}
           {isLoading && (
-            <div className="typing-indicator">
-              <div className="typing-avatar">🤖</div>
+            <div
+              className="typing-indicator"
+              role="status"
+              aria-live="polite"
+              aria-label="MediBot is typing a response"
+            >
+              <div className="typing-avatar" aria-hidden="true">
+                <span className="typing-avatar-dot" />
+              </div>
               <div className="typing-bubble">
-                <div className="typing-dot"></div>
-                <div className="typing-dot"></div>
-                <div className="typing-dot"></div>
+                <span className="typing-label">Typing</span>
+                <div className="typing-dots" aria-hidden>
+                  <div className="typing-dot" />
+                  <div className="typing-dot" />
+                  <div className="typing-dot" />
+                </div>
               </div>
             </div>
           )}
-          
-          <div ref={messagesEndRef} />
+
+          <div ref={messagesEndRef} aria-hidden="true" />
         </div>
 
         {/* Input Area */}
-        <div className="chat-input-area">
-          <form onSubmit={handleSubmit} className="chat-input-form">
+        <footer className="chat-input-area">
+          <form onSubmit={handleSubmit} className="chat-input-form" aria-label="Send message form">
             {/* Upload Button - LEFT SIDE */}
             <input
               ref={fileInputRef}
@@ -296,35 +339,45 @@ export default function Chat() {
               disabled={isUploading}
               style={{ display: 'none' }}
               id="file-upload"
+              aria-label="Upload medical report"
             />
-            <label htmlFor="file-upload" className="chat-upload-btn-left" title="Upload Medical Report">
+            <label
+              htmlFor="file-upload"
+              className="chat-upload-btn-left"
+              aria-label={isUploading ? 'Uploading file' : 'Upload medical report'}
+            >
               {isUploading ? (
-                <span>⏳</span>
+                <span aria-hidden="true">⏳</span>
               ) : (
-                <span>📎</span>
+                <span aria-hidden="true">📎</span>
               )}
             </label>
 
+            <label htmlFor="chat-message-input" className="sr-only">Message input</label>
             <input
+              id="chat-message-input"
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Describe your symptoms..."
               className="chat-input"
               disabled={isLoading}
+              aria-label="Type your symptoms or health concerns"
+              aria-required="true"
             />
             <button
               type="submit"
               disabled={isLoading || !input.trim()}
               className="chat-send-btn"
+              aria-label="Send message"
             >
-              <span>📤</span>
+              <span aria-hidden="true">📤</span>
             </button>
           </form>
-          <p className="chat-disclaimer">
+          <p className="chat-disclaimer" role="note">
             MediBot provides information, not medical advice. Consult a doctor for serious conditions.
           </p>
-        </div>
+        </footer>
       </div>
     </div>
   )

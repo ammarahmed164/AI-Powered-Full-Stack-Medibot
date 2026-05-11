@@ -20,6 +20,23 @@ interface ChatState {
   sessionId: string | null
 }
 
+const createMessageId = () =>
+  `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+
+function messageFromChatSendError(error: any): string {
+  const detail = error?.response?.data?.detail
+  if (detail) {
+    return typeof detail === 'string' ? detail : JSON.stringify(detail)
+  }
+  const code = error?.code
+  if (code === 'ERR_NETWORK' || error?.message === 'Network Error') {
+    const base =
+      import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1'
+    return `Server unreachable (${base}). Start the MediBot backend (uvicorn) on the same host/port as VITE_API_URL, or fix the URL in frontend/.env.`
+  }
+  return error?.message || 'Failed to send message'
+}
+
 const initialState: ChatState = {
   messages: [],
   isLoading: false,
@@ -50,6 +67,11 @@ export const sendMessage = createAsyncThunk(
 
       // Send to API
       const response = await chatAPI.sendMessage(message, sessionId, conversationHistory)
+      const responseData = response?.data
+
+      if (!responseData || typeof responseData !== 'object') {
+        throw new Error('Invalid response from chat service')
+      }
 
       // Save to database if user is logged in
       // 1. Check State & LocalStorage
@@ -76,40 +98,54 @@ export const sendMessage = createAsyncThunk(
       })
 
       if (userId && response.data) {
-        try {
-          // Map messages for History API (Backend expects 'sender_type', not 'type')
-          const historyMessages = [
-            ...conversationHistory.map((msg: any) => ({
-              sender_type: msg.type,
-              content: msg.content
-            })),
-            { sender_type: 'user', content: message },
-            { sender_type: 'bot', content: response.data.response }
-          ]
+        const historyMessages = [
+          ...conversationHistory.map((msg: any) => ({
+            sender_type: msg.type,
+            content: msg.content
+          })),
+          { sender_type: 'user', content: message },
+          { sender_type: 'bot', content: response.data.response }
+        ]
 
-          const saveResponse = await historyAPI.saveSession({
-            user_id: userId,
-            session_name: `Chat ${new Date().toLocaleDateString()}`,
-            messages: historyMessages
-          })
-          
-          console.log('✅ Chat history saved successfully!', saveResponse.data)
-        } catch (error: any) {
-          console.error('❌ Failed to save chat history:', error.response?.data || error.message)
-          // Don't fail the whole request if save fails
+        const payload = {
+          user_id: userId,
+          session_name: `Chat ${new Date().toLocaleDateString()}`,
+          messages: historyMessages
         }
-      } else {
-        console.warn('⚠️ User ID not found - chat not saved to history')
+
+        // Persist in background so a failing /history/sessions call never blocks chat UX
+        // or surfaces a noisy axios stack in the same tick as the assistant reply.
+        queueMicrotask(() => {
+          historyAPI
+            .saveSession(payload)
+            .then((saveResponse) => {
+              if (saveResponse.data?.skipped) return
+              if (import.meta.env.DEV) {
+                console.debug('[chat history] saved', saveResponse.data)
+              }
+            })
+            .catch((err: any) => {
+              const status = err.response?.status
+              const detail = err.response?.data?.detail
+              console.warn(
+                '[chat history] save failed (chat reply is unaffected)',
+                status ?? err.message,
+                detail ?? ''
+              )
+            })
+        })
+      } else if (import.meta.env.DEV) {
+        console.debug('[chat history] skipped — no user id')
       }
 
       return {
         userMessage: message,
-        botResponse: response.data,
-        sessionId: response.data.consultation_id || response.data.session_id,
+        botResponse: responseData,
+        sessionId: responseData.consultation_id || responseData.session_id,
       }
     } catch (error: any) {
       console.error('Chat error:', error)
-      return rejectWithValue(error.response?.data?.detail || 'Failed to send message')
+      return rejectWithValue(messageFromChatSendError(error))
     }
   }
 )
@@ -131,7 +167,12 @@ const chatSlice = createSlice({
   initialState,
   reducers: {
     addMessage: (state, action) => {
-      state.messages.push(action.payload)
+      const payload = action.payload || {}
+      state.messages.push({
+        ...payload,
+        id: payload.id || createMessageId(),
+        timestamp: payload.timestamp || new Date().toISOString(),
+      })
     },
     clearMessages: (state) => {
       state.messages = []
@@ -143,25 +184,23 @@ const chatSlice = createSlice({
   extraReducers: (builder) => {
     builder
       // Send Message
-      .addCase(sendMessage.pending, (state) => {
+      .addCase(sendMessage.pending, (state, action) => {
         state.isLoading = true
         state.error = null
+        state.messages.push({
+          id: createMessageId(),
+          type: 'user',
+          content: action.meta.arg,
+          timestamp: new Date().toISOString(),
+        })
       })
       .addCase(sendMessage.fulfilled, (state, action) => {
         state.isLoading = false
 
-        // Add user message
-        state.messages.push({
-          id: Date.now().toString(),
-          type: 'user',
-          content: action.payload.userMessage,
-          timestamp: new Date().toISOString(),
-        })
-
         // Add bot response
         const response = action.payload.botResponse
         state.messages.push({
-          id: (Date.now() + 1).toString(),
+          id: createMessageId(),
           type: 'bot',
           content: response.response || response.message || 'I need more information to help you.',
           timestamp: new Date().toISOString(),
@@ -178,7 +217,14 @@ const chatSlice = createSlice({
       })
       .addCase(sendMessage.rejected, (state, action: any) => {
         state.isLoading = false
-        state.error = action.payload
+        const errorMessage = action.payload || 'Failed to send message'
+        state.error = errorMessage
+        state.messages.push({
+          id: createMessageId(),
+          type: 'bot',
+          content: `Sorry, I could not process that message. ${errorMessage}`,
+          timestamp: new Date().toISOString(),
+        })
       })
       // Get History
       .addCase(getChatHistory.fulfilled, () => {

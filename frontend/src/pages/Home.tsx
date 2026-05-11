@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import MediBotLogo from '../components/MediBotLogo'
 import './Home.css'
 
 export default function Home() {
@@ -44,10 +45,7 @@ export default function Home() {
               transition={{ delay: 0.4, type: "spring" }}
             >
               <div className="hero-logo-3d">
-                <span className="logo-main">🏥</span>
-                <div className="logo-glow"></div>
-                <div className="logo-ring-1"></div>
-                <div className="logo-ring-2"></div>
+                <MediBotLogo size="hero" />
               </div>
             </motion.div>
 

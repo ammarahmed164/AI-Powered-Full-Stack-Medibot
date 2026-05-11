@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { register } from '../store/slices/authSlice'
 import { AppDispatch } from '../store/store'
+import MediBotLogo from '../components/MediBotLogo'
 import './Auth.css'
 
 export default function Register() {
@@ -38,7 +39,7 @@ export default function Register() {
         <div className="auth-card">
           <div className="auth-header">
             <div className="auth-logo">
-              <span>🏥</span>
+              <MediBotLogo size="auth" />
             </div>
             <h1>Create Account</h1>
             <p>Join MediBot for free health consultations</p>
