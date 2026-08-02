@@ -36,52 +36,26 @@
 }
 
 .auth-logo {
-  width: auto;
-  max-width: 12rem;
-  height: auto;
+  width: 100%;
+  max-width: 14rem;
   margin: 0 auto;
-  padding: 0.75rem 0 0;
-  min-height: 4.5rem;
-  background: transparent;
-  border-radius: 0;
+  padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  overflow: visible;
   flex-shrink: 0;
 }
 
 .auth-logo .medibot-logo-3d--auth {
   margin-bottom: 0;
-  animation: none;
-}
-
-.auth-logo .medibot-logo-3d--auth .medibot-logo-3d__img {
-  animation: none;
-  transform: none;
-}
-
-.auth-logo .medibot-logo-3d--auth .medibot-logo-3d__orbit,
-.auth-logo .medibot-logo-3d--auth .medibot-logo-3d__ambient,
-.auth-logo .medibot-logo-3d--auth .medibot-logo-3d__ambient--alt {
-  display: none;
-}
-
-.auth-logo img,
-.auth-logo .medibot-logo-3d__img {
-  width: 100%;
-  max-width: 11rem;
-  height: auto;
-  display: block;
-  object-fit: contain;
 }
 
 .auth-header h1 {
   font-size: 2rem;
   font-weight: 800;
   color: var(--gray-900);
-  margin: 1.75rem 0 0.5rem;
-  padding-top: 0.25rem;
+  margin: 1.5rem 0 0.5rem;
   line-height: 1.2;
   position: relative;
   z-index: 1;
@@ -264,8 +238,8 @@
   }
 
   .auth-logo {
-    width: 4rem;
-    height: 4rem;
-    font-size: 2.5rem;
+    max-width: 12rem;
+    width: 100%;
+    height: auto;
   }
 }

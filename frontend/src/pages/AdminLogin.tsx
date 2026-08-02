@@ -108,14 +108,9 @@ export default function AdminLogin() {
         .admin-login-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
         
         .admin-login-header { text-align: center; margin-bottom: 35px; display: flex; flex-direction: column; align-items: center; gap: 0; }
-        .admin-login-brand { margin-bottom: 0; padding: 0.75rem 0 0; min-height: 4.5rem; display: flex; justify-content: center; align-items: center; overflow: hidden; flex-shrink: 0; }
-        .admin-login-brand .medibot-logo-3d--auth { animation: none; }
-        .admin-login-brand .medibot-logo-3d__img { animation: none; transform: none; }
-        .admin-login-brand .medibot-logo-3d__orbit,
-        .admin-login-brand .medibot-logo-3d__ambient,
-        .admin-login-brand .medibot-logo-3d__ambient--alt { display: none; }
-        .admin-login-brand img { max-width: 200px; width: 100%; height: auto; filter: drop-shadow(0 6px 18px rgba(0,0,0,0.35)); }
-        .admin-login-title { font-size: 2.25rem; font-weight: 800; color: #ffffff; margin: 1.75rem 0 10px 0; padding-top: 0.25rem; letter-spacing: -0.5px; line-height: 1.2; position: relative; z-index: 1; }
+        .admin-login-brand { margin-bottom: 0; padding: 0; width: 100%; max-width: 14rem; display: flex; justify-content: center; align-items: center; overflow: visible; flex-shrink: 0; }
+        .admin-login-brand .medibot-logo-3d--auth { background: linear-gradient(145deg, rgba(99, 102, 241, 0.12) 0%, rgba(15, 23, 42, 0.85) 50%, rgba(56, 189, 248, 0.08) 100%); box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.25) inset, 0 8px 28px rgba(0, 0, 0, 0.35); }
+        .admin-login-title { font-size: 2.25rem; font-weight: 800; color: #ffffff; margin: 1.5rem 0 10px 0; letter-spacing: -0.5px; line-height: 1.2; position: relative; z-index: 1; }
         .admin-login-subtitle { color: #94a3b8; margin: 0; font-size: 1rem; }
         
         .admin-login-form { display: flex; flex-direction: column; gap: 20px; }
