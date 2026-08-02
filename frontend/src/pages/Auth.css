@@ -1,7 +1,7 @@
 /* Auth Pages (Login & Register) Styles */
 
 .auth-page {
-  min-height: 100vh;
+  min-height: calc(100vh - 4.75rem);
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   display: flex;
   align-items: center;
@@ -29,22 +29,46 @@
 .auth-header {
   text-align: center;
   margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
 }
 
 .auth-logo {
   width: auto;
   max-width: 12rem;
   height: auto;
-  margin: 0 auto 1.5rem;
-  padding: 0;
+  margin: 0 auto;
+  padding: 0.75rem 0 0;
+  min-height: 4.5rem;
   background: transparent;
   border-radius: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
 }
 
-.auth-logo img {
+.auth-logo .medibot-logo-3d--auth {
+  margin-bottom: 0;
+  animation: none;
+}
+
+.auth-logo .medibot-logo-3d--auth .medibot-logo-3d__img {
+  animation: none;
+  transform: none;
+}
+
+.auth-logo .medibot-logo-3d--auth .medibot-logo-3d__orbit,
+.auth-logo .medibot-logo-3d--auth .medibot-logo-3d__ambient,
+.auth-logo .medibot-logo-3d--auth .medibot-logo-3d__ambient--alt {
+  display: none;
+}
+
+.auth-logo img,
+.auth-logo .medibot-logo-3d__img {
   width: 100%;
   max-width: 11rem;
   height: auto;
@@ -56,7 +80,11 @@
   font-size: 2rem;
   font-weight: 800;
   color: var(--gray-900);
-  margin-bottom: 0.5rem;
+  margin: 1.75rem 0 0.5rem;
+  padding-top: 0.25rem;
+  line-height: 1.2;
+  position: relative;
+  z-index: 1;
 }
 
 .auth-header p {

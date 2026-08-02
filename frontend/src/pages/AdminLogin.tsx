@@ -96,7 +96,7 @@ export default function AdminLogin() {
       </div>
 
       <style>{`
-        .admin-login-page { min-height: 100vh; background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .admin-login-page { min-height: calc(100vh - 4.75rem); background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
         .admin-login-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
         .bg-orb { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.4; animation: orbFloat 20s ease-in-out infinite; }
         .orb-1 { width: 500px; height: 500px; background: #667eea; top: -150px; right: -150px; }
@@ -107,10 +107,15 @@ export default function AdminLogin() {
         .admin-login-container { position: relative; z-index: 1; width: 100%; max-width: 480px; padding: 20px; }
         .admin-login-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
         
-        .admin-login-header { text-align: center; margin-bottom: 35px; }
-        .admin-login-brand { margin-bottom: 15px; display: flex; justify-content: center; align-items: center; }
+        .admin-login-header { text-align: center; margin-bottom: 35px; display: flex; flex-direction: column; align-items: center; gap: 0; }
+        .admin-login-brand { margin-bottom: 0; padding: 0.75rem 0 0; min-height: 4.5rem; display: flex; justify-content: center; align-items: center; overflow: hidden; flex-shrink: 0; }
+        .admin-login-brand .medibot-logo-3d--auth { animation: none; }
+        .admin-login-brand .medibot-logo-3d__img { animation: none; transform: none; }
+        .admin-login-brand .medibot-logo-3d__orbit,
+        .admin-login-brand .medibot-logo-3d__ambient,
+        .admin-login-brand .medibot-logo-3d__ambient--alt { display: none; }
         .admin-login-brand img { max-width: 200px; width: 100%; height: auto; filter: drop-shadow(0 6px 18px rgba(0,0,0,0.35)); }
-        .admin-login-title { font-size: 2.25rem; font-weight: 800; color: #ffffff; margin: 0 0 10px 0; letter-spacing: -0.5px; }
+        .admin-login-title { font-size: 2.25rem; font-weight: 800; color: #ffffff; margin: 1.75rem 0 10px 0; padding-top: 0.25rem; letter-spacing: -0.5px; line-height: 1.2; position: relative; z-index: 1; }
         .admin-login-subtitle { color: #94a3b8; margin: 0; font-size: 1rem; }
         
         .admin-login-form { display: flex; flex-direction: column; gap: 20px; }

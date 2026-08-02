@@ -10,10 +10,13 @@
    NAVBAR - ULTRA CREATIVE
    ============================================ */
 .navbar {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
   z-index: 1000;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
   background: transparent;
   overflow: visible;
   --navbar-brand-inner: rgba(15, 23, 42, 0.46);
@@ -21,8 +24,9 @@
 }
 
 .navbar.navbar-scrolled {
-  --navbar-brand-inner: rgba(255, 255, 255, 0.94);
-  --navbar-brand-inner-scrim: rgba(248, 250, 252, 0.88);
+  /* Light scrolled capsule — logo wordmark + tagline stay visible on white bar */
+  --navbar-brand-inner: rgba(255, 255, 255, 0.92);
+  --navbar-brand-inner-scrim: rgba(248, 250, 252, 0.96);
 }
 
 .navbar-transparent {
@@ -145,6 +149,7 @@
   padding: 0.15rem 0.75rem 0.15rem 0.1rem;
   margin-left: -0.15rem;
   border-radius: 1.35rem;
+  flex-shrink: 0;
   transition:
     transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
     filter 0.45s ease;
@@ -277,9 +282,46 @@
 }
 
 .navbar.navbar-scrolled .navbar-brand-visual-panel {
+  opacity: 1;
+  background: linear-gradient(
+    165deg,
+    var(--navbar-brand-inner, rgba(255, 255, 255, 0.92)) 0%,
+    var(--navbar-brand-inner-scrim, rgba(248, 250, 252, 0.96)) 100%
+  );
   box-shadow:
-    0 0 0 1px rgba(99, 102, 241, 0.1) inset,
-    0 10px 26px rgba(99, 102, 241, 0.08);
+    0 0 0 1px rgba(99, 102, 241, 0.12) inset,
+    0 4px 14px rgba(99, 102, 241, 0.08);
+}
+
+/* Scrolled: hide decorative chrome that looked like a blank dark-blue block */
+.navbar.navbar-scrolled .navbar-brand-visual-ring,
+.navbar.navbar-scrolled .navbar-brand-orbit,
+.navbar.navbar-scrolled .navbar-brand-spark,
+.navbar.navbar-scrolled .navbar-brand-cluster-bloom {
+  opacity: 0;
+  visibility: hidden;
+  animation: none;
+}
+
+.navbar.navbar-scrolled .navbar-brand .medibot-logo-3d--nav {
+  background: transparent;
+  box-shadow: none;
+  animation: none;
+  padding: 0.12rem 0.28rem;
+}
+
+.navbar.navbar-scrolled .navbar-brand .medibot-logo-3d--nav .medibot-logo-3d__prism,
+.navbar.navbar-scrolled .navbar-brand .medibot-logo-3d--nav .medibot-logo-3d__ambient,
+.navbar.navbar-scrolled .navbar-brand .medibot-logo-3d--nav .medibot-logo-3d__sonar,
+.navbar.navbar-scrolled .navbar-brand .medibot-logo-3d--nav .medibot-logo-3d__orbit,
+.navbar.navbar-scrolled .navbar-brand .medibot-logo-3d--nav .medibot-logo-3d__shine-sweep {
+  display: none;
+}
+
+.navbar.navbar-scrolled .navbar-brand .medibot-logo-3d--nav .medibot-logo-3d__img {
+  animation: none;
+  transform: none;
+  filter: drop-shadow(0 2px 6px rgba(15, 23, 42, 0.12));
 }
 
 .navbar-brand-glare {
@@ -314,8 +356,25 @@
 
 .navbar-brand-logo-slot {
   position: relative;
-  z-index: 3;
+  z-index: 5;
   margin: 1px;
+  flex-shrink: 0;
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Scrolled: keep logo + tagline visible; tone down overlays that washed out the wordmark */
+.navbar-scrolled .navbar-brand-glare {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.navbar-scrolled .navbar-brand-logo-slot,
+.navbar-scrolled .navbar-brand-logo-slot .medibot-logo-3d__img,
+.navbar-scrolled .brand-text,
+.navbar-scrolled .brand-tagline {
+  opacity: 1;
+  visibility: visible;
 }
 
 /* Navbar logo: slightly larger + calmer internal FX so chrome reads clearly */
@@ -491,6 +550,10 @@
   display: flex;
   flex-direction: column;
   position: relative;
+  flex-shrink: 0;
+  min-width: 0;
+  opacity: 1;
+  visibility: visible;
 }
 
 .brand-main {
@@ -556,8 +619,11 @@
 }
 
 .navbar-scrolled .brand-tagline {
-  background: linear-gradient(90deg, #475569, #6366f1);
-  background-size: 100% auto;
+  background: none;
+  -webkit-background-clip: unset;
+  background-clip: unset;
+  color: #4338ca;
+  -webkit-text-fill-color: #4338ca;
   animation: none;
 }
 
@@ -1355,10 +1421,11 @@
   color: white;
 }
 
-/* Main Content */
+/* Main Content — offset for fixed navbar (~72px) */
 .main-content {
   flex: 1;
   background: var(--gray-50);
+  padding-top: 4.75rem;
 }
 
 /* Footer */
