@@ -24,6 +24,8 @@ const OPHTHALMOLOGY_DOCTOR = {
   bio: 'Advancing vision care through ophthalmology fellowship training — focused on eye health, clinical diagnosis, and patient-centered visual rehabilitation.',
 }
 
+const FEED_PREVIEW_COUNT = 5
+
 export default function AdminPanel() {
   const navigate = useNavigate()
   const [users, setUsers] = useState<any[]>([])
@@ -41,6 +43,7 @@ export default function AdminPanel() {
   const [feedError, setFeedError] = useState<string | null>(null)
   const [expandedSessionId, setExpandedSessionId] = useState<string | null>(null)
   const [feedSearch, setFeedSearch] = useState('')
+  const [feedShowAll, setFeedShowAll] = useState(false)
 
   useEffect(() => {
     const adminToken = localStorage.getItem('admin_token')
@@ -165,6 +168,12 @@ export default function AdminPanel() {
       session.session_name?.toLowerCase().includes(q)
     )
   })
+
+  const isFeedSearching = feedSearch.trim().length > 0
+  const displayedFeed =
+    feedShowAll || isFeedSearching ? filteredFeed : filteredFeed.slice(0, FEED_PREVIEW_COUNT)
+  const hiddenFeedCount = Math.max(0, filteredFeed.length - FEED_PREVIEW_COUNT)
+  const canToggleFeed = !isFeedSearching && filteredFeed.length > FEED_PREVIEW_COUNT
 
   const toggleSessionExpand = (sessionId: string) => {
     setExpandedSessionId((prev) => (prev === sessionId ? null : sessionId))
@@ -386,7 +395,7 @@ export default function AdminPanel() {
             </div>
           ) : (
             <div className="admin-consultation-list">
-              {filteredFeed.map((session) => {
+              {displayedFeed.map((session) => {
                 const isOpen = expandedSessionId === session.id
                 return (
                   <article key={session.id} className={`admin-consultation-card ${isOpen ? 'is-open' : ''}`}>
@@ -447,6 +456,28 @@ export default function AdminPanel() {
                   </article>
                 )
               })}
+            </div>
+          )}
+
+          {!feedLoading && canToggleFeed && (
+            <div className="admin-feed-more">
+              <button
+                type="button"
+                className="admin-feed-more-btn"
+                onClick={() => setFeedShowAll((prev) => !prev)}
+                aria-expanded={feedShowAll}
+              >
+                {feedShowAll ? (
+                  <>Show fewer consultations</>
+                ) : (
+                  <>See more consultations · {hiddenFeedCount} hidden</>
+                )}
+              </button>
+              {!feedShowAll && (
+                <p className="admin-feed-more-hint">
+                  Showing {FEED_PREVIEW_COUNT} of {filteredFeed.length} sessions
+                </p>
+              )}
             </div>
           )}
         </section>
