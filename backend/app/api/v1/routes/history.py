@@ -9,15 +9,9 @@ from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime
 import httpx
-import os
-from dotenv import load_dotenv
-
-load_dotenv()
+from app.core.supabase_client import SUPABASE_URL, SUPABASE_KEY, supabase_headers
 
 router = APIRouter()
-
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
 class ChatMessage(BaseModel):
     sender_type: str  # 'user' or 'bot'
@@ -124,6 +118,84 @@ async def get_sessions(user_id: str):
         raise HTTPException(status_code=500, detail="Failed to get sessions")
     
     except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Admin: all consultation sessions with previews
+@router.get("/admin/feed")
+async def get_admin_feed(limit: int = 80):
+    """All chat sessions for admin dashboard with user info and message previews."""
+    if not SUPABASE_URL or not SUPABASE_KEY:
+        return {"sessions": [], "configured": False}
+
+    try:
+        headers = supabase_headers({"Content-Type": "application/json"})
+
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            sessions_resp = await client.get(
+                f"{SUPABASE_URL}/rest/v1/chat_sessions?select=*&order=created_at.desc&limit={limit}",
+                headers=headers,
+            )
+            if sessions_resp.status_code != 200:
+                raise HTTPException(status_code=sessions_resp.status_code, detail=sessions_resp.text)
+
+            sessions = sessions_resp.json() or []
+            if not sessions:
+                return {"sessions": [], "configured": True}
+
+            users_resp = await client.get(
+                f"{SUPABASE_URL}/rest/v1/users?select=id,full_name,email",
+                headers=headers,
+            )
+            users_map = {}
+            if users_resp.status_code == 200:
+                for user in users_resp.json() or []:
+                    users_map[user.get("id")] = user
+
+            session_ids = [s["id"] for s in sessions if s.get("id")]
+            messages_by_session: dict = {sid: [] for sid in session_ids}
+
+            if session_ids:
+                ids_filter = ",".join(session_ids)
+                messages_resp = await client.get(
+                    f"{SUPABASE_URL}/rest/v1/chat_messages?session_id=in.({ids_filter})&order=created_at.asc",
+                    headers=headers,
+                )
+                if messages_resp.status_code == 200:
+                    for msg in messages_resp.json() or []:
+                        sid = msg.get("session_id")
+                        if sid in messages_by_session:
+                            messages_by_session[sid].append(msg)
+
+            feed = []
+            for session in sessions:
+                sid = session.get("id")
+                user = users_map.get(session.get("user_id"), {})
+                msgs = messages_by_session.get(sid, [])
+                user_msgs = [m for m in msgs if m.get("sender_type") == "user"]
+                preview = ""
+                if user_msgs:
+                    preview = (user_msgs[0].get("content") or "")[:160]
+                elif msgs:
+                    preview = (msgs[0].get("content") or "")[:160]
+
+                feed.append({
+                    "id": sid,
+                    "session_name": session.get("session_name") or "Consultation",
+                    "created_at": session.get("created_at"),
+                    "user_id": session.get("user_id"),
+                    "user_name": user.get("full_name") or "Unknown user",
+                    "user_email": user.get("email") or "—",
+                    "message_count": len(msgs),
+                    "preview": preview,
+                    "messages": msgs,
+                })
+
+            return {"sessions": feed, "configured": True}
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"❌ admin feed error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 # Get session messages

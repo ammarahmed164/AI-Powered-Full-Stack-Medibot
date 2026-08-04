@@ -6,26 +6,15 @@ Get real-time statistics for the dashboard
 
 from fastapi import APIRouter, HTTPException
 import httpx
-import os
-from dotenv import load_dotenv
-
-load_dotenv()
+from app.core.supabase_client import SUPABASE_URL, SUPABASE_KEY, supabase_headers
 
 router = APIRouter()
-
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
 @router.get("/stats")
 async def get_dashboard_stats():
     """Get real-time dashboard statistics"""
     try:
-        headers = {
-            "apikey": SUPABASE_KEY,
-            "Authorization": f"Bearer {SUPABASE_KEY}",
-            "Content-Type": "application/json",
-            "Prefer": "return=representation"
-        }
+        headers = supabase_headers({"Content-Type": "application/json", "Prefer": "return=representation"})
 
         async with httpx.AsyncClient() as client:
             # Get total users

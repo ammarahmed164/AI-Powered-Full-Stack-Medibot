@@ -6,15 +6,9 @@ Admin endpoints for managing users
 
 from fastapi import APIRouter, HTTPException, Header
 import httpx
-import os
-from dotenv import load_dotenv
-
-load_dotenv()
+from app.core.supabase_client import SUPABASE_URL, SUPABASE_KEY, supabase_headers
 
 router = APIRouter()
-
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
 @router.get("/")
 async def get_all_users(authorization: str = Header(None)):
@@ -25,12 +19,7 @@ async def get_all_users(authorization: str = Header(None)):
             # For now, allow if token exists. In production, verify JWT role.
             pass
 
-        headers = {
-            "apikey": SUPABASE_KEY,
-            "Authorization": f"Bearer {SUPABASE_KEY}",
-            "Content-Type": "application/json",
-            "Prefer": "return=representation"
-        }
+        headers = supabase_headers({"Content-Type": "application/json", "Prefer": "return=representation"})
 
         async with httpx.AsyncClient() as client:
             # Fetch users from Supabase 'users' table
