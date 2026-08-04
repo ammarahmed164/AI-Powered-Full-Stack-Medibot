@@ -3,8 +3,9 @@
 .admin-simple {
   min-height: auto;
   position: relative;
-  overflow-x: hidden;
-  overflow-y: visible;
+  overflow: clip;
+  width: 100%;
+  max-width: 100%;
   color: #e2e8f0;
   background-color: #070b14;
   background-image:
@@ -838,7 +839,7 @@
 .admin-users-shell {
   flex: 0 0 auto;
   position: relative;
-  overflow: visible;
+  overflow: hidden;
   border-radius: 1.35rem;
   padding: clamp(1.25rem, 3vw, 1.85rem);
   background: rgba(15, 23, 42, 0.88);
@@ -1606,6 +1607,9 @@
 
 .admin-table-scroll {
   overflow-x: auto;
+  overflow-y: visible;
+  overscroll-behavior-x: contain;
+  overscroll-behavior-y: auto;
   border-radius: 0.9rem;
   border: 1px solid rgba(51, 65, 85, 0.55);
   position: relative;
@@ -2548,24 +2552,36 @@
   }
 }
 
-/* Admin page — document scroll & lighter rendering */
+/* Admin page — native document scroll (avoid nested scroll traps) */
 html:has(.admin-simple),
 body:has(.admin-simple) {
-  overflow-y: auto;
+  overflow-x: hidden;
+  overflow-y: scroll;
   height: auto;
+  min-height: 100%;
   scroll-behavior: auto;
   overscroll-behavior-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.layout:has(.admin-simple) {
+  overflow: visible;
+  min-height: auto;
+  height: auto;
 }
 
 .main-content:has(.admin-simple) {
   overflow: visible;
-  min-height: 0;
+  flex: 1 0 auto;
+  min-height: auto;
+  height: auto;
   padding-bottom: 0;
 }
 
 .admin-simple {
   touch-action: pan-y;
   margin-bottom: 0;
+  -webkit-overflow-scrolling: touch;
 }
 
 @media (prefers-reduced-motion: reduce) {
