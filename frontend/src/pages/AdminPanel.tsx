@@ -477,7 +477,17 @@ export default function AdminPanel() {
           <div className="admin-faculty-grid admin-faculty-grid--spotlight">
             <article className="doctor-spotlight doctor-spotlight--ortho" aria-labelledby="doctor-orthopedic-heading">
               <div className="doctor-spotlight__banner">
-                <img src={adminSpotlightPortrait} alt="" className="doctor-spotlight__photo" loading="lazy" />
+                <div className="doctor-spotlight__portrait-stage">
+                  <div className="doctor-spotlight__portrait-ring" aria-hidden="true" />
+                  <div className="doctor-spotlight__portrait-shine" aria-hidden="true" />
+                  <img
+                    src={adminSpotlightPortrait}
+                    alt={`${ORTHOPEDIC_DOCTOR.name}, ${ORTHOPEDIC_DOCTOR.title}`}
+                    className="doctor-spotlight__photo"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
                 <div className="doctor-spotlight__banner-overlay" aria-hidden />
                 <span className="doctor-spotlight__tag">🦴 Orthopedic</span>
               </div>
@@ -500,7 +510,17 @@ export default function AdminPanel() {
 
             <article className="doctor-spotlight doctor-spotlight--vision" aria-labelledby="doctor-ophthalmology-heading">
               <div className="doctor-spotlight__banner">
-                <img src={adminDoctor2Portrait} alt="" className="doctor-spotlight__photo" loading="lazy" />
+                <div className="doctor-spotlight__portrait-stage">
+                  <div className="doctor-spotlight__portrait-ring doctor-spotlight__portrait-ring--vision" aria-hidden="true" />
+                  <div className="doctor-spotlight__portrait-shine doctor-spotlight__portrait-shine--vision" aria-hidden="true" />
+                  <img
+                    src={adminDoctor2Portrait}
+                    alt={`${OPHTHALMOLOGY_DOCTOR.name}, ${OPHTHALMOLOGY_DOCTOR.title}`}
+                    className="doctor-spotlight__photo"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
                 <div className="doctor-spotlight__banner-overlay doctor-spotlight__banner-overlay--vision" aria-hidden />
                 <span className="doctor-spotlight__tag doctor-spotlight__tag--vision">👁 Ophthalmology</span>
               </div>
