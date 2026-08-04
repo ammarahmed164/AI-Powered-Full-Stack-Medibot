@@ -210,8 +210,84 @@ export default function AdminPanel() {
           </button>
         </header>
 
+        <section className="admin-page-section admin-faculty-section admin-reveal admin-reveal--1" aria-labelledby="admin-faculty-title">
+          <header className="admin-faculty-head">
+            <span className="admin-section-chip admin-section-chip--violet">Clinical network</span>
+            <h2 id="admin-faculty-title" className="admin-faculty-title">Physician faculty</h2>
+            <p className="admin-faculty-sub">Featured specialists across orthopedics and vision care</p>
+          </header>
+
+          <div className="admin-faculty-grid admin-faculty-grid--spotlight">
+            <article className="doctor-spotlight doctor-spotlight--ortho" aria-labelledby="doctor-orthopedic-heading">
+              <div className="doctor-spotlight__banner">
+                <div className="doctor-spotlight__portrait-stage">
+                  <div className="doctor-spotlight__portrait-ring" aria-hidden="true" />
+                  <div className="doctor-spotlight__portrait-shine" aria-hidden="true" />
+                  <img
+                    src={adminSpotlightPortrait}
+                    alt={`${ORTHOPEDIC_DOCTOR.name}, ${ORTHOPEDIC_DOCTOR.title}`}
+                    className="doctor-spotlight__photo"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+                <div className="doctor-spotlight__banner-overlay" aria-hidden />
+                <span className="doctor-spotlight__tag">🦴 Orthopedic</span>
+              </div>
+              <div className="doctor-spotlight__content">
+                <h3 id="doctor-orthopedic-heading" className="doctor-spotlight__name">{ORTHOPEDIC_DOCTOR.name}</h3>
+                <p className="doctor-spotlight__role">{ORTHOPEDIC_DOCTOR.title}</p>
+                <p className="doctor-spotlight__quals">{ORTHOPEDIC_DOCTOR.qualificationLine}</p>
+                <p className="doctor-spotlight__bio">{ORTHOPEDIC_DOCTOR.bio}</p>
+                <ul className="doctor-spotlight__stats">
+                  <li><strong>{ORTHOPEDIC_DOCTOR.experienceYears}+</strong><span>Years</span></li>
+                  <li><strong>FCPS</strong><span>Board</span></li>
+                  <li><strong>Mon–Sat</strong><span>Available</span></li>
+                </ul>
+                <div className="doctor-spotlight__footer">
+                  <span className="doctor-spotlight__chip">🏥 {ORTHOPEDIC_DOCTOR.hospital}</span>
+                  <span className="doctor-spotlight__chip doctor-spotlight__chip--time">🕐 {ORTHOPEDIC_DOCTOR.availability}</span>
+                </div>
+              </div>
+            </article>
+
+            <article className="doctor-spotlight doctor-spotlight--vision" aria-labelledby="doctor-ophthalmology-heading">
+              <div className="doctor-spotlight__banner">
+                <div className="doctor-spotlight__portrait-stage">
+                  <div className="doctor-spotlight__portrait-ring doctor-spotlight__portrait-ring--vision" aria-hidden="true" />
+                  <div className="doctor-spotlight__portrait-shine doctor-spotlight__portrait-shine--vision" aria-hidden="true" />
+                  <img
+                    src={adminDoctor2Portrait}
+                    alt={`${OPHTHALMOLOGY_DOCTOR.name}, ${OPHTHALMOLOGY_DOCTOR.title}`}
+                    className="doctor-spotlight__photo"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+                <div className="doctor-spotlight__banner-overlay doctor-spotlight__banner-overlay--vision" aria-hidden />
+                <span className="doctor-spotlight__tag doctor-spotlight__tag--vision">👁 Ophthalmology</span>
+              </div>
+              <div className="doctor-spotlight__content">
+                <h3 id="doctor-ophthalmology-heading" className="doctor-spotlight__name">{OPHTHALMOLOGY_DOCTOR.name}</h3>
+                <p className="doctor-spotlight__role">{OPHTHALMOLOGY_DOCTOR.title}</p>
+                <p className="doctor-spotlight__quals">{OPHTHALMOLOGY_DOCTOR.qualificationLine}</p>
+                <p className="doctor-spotlight__bio">{OPHTHALMOLOGY_DOCTOR.bio}</p>
+                <ul className="doctor-spotlight__stats doctor-spotlight__stats--vision">
+                  <li><strong>LUMHS</strong><span>Jamshoro</span></li>
+                  <li><strong>MBBS</strong><span>Degree</span></li>
+                  <li><strong>JPMC</strong><span>Fellowship</span></li>
+                </ul>
+                <div className="doctor-spotlight__footer">
+                  <span className="doctor-spotlight__chip doctor-spotlight__chip--vision">🎓 {OPHTHALMOLOGY_DOCTOR.education}</span>
+                  <span className="doctor-spotlight__chip doctor-spotlight__chip--vision">👁 {OPHTHALMOLOGY_DOCTOR.fellowship}</span>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
         <section
-          className="admin-stats-wrap admin-stats-wrap--bar admin-reveal admin-reveal--1"
+          className="admin-stats-wrap admin-stats-wrap--bar admin-reveal admin-reveal--2"
           role="region"
           aria-label="Platform statistics"
         >
@@ -250,7 +326,7 @@ export default function AdminPanel() {
           </div>
         </section>
 
-        <section className="admin-consultation-feed admin-reveal admin-reveal--2" aria-labelledby="consultation-feed-title">
+        <section className="admin-consultation-feed admin-reveal admin-reveal--3" aria-labelledby="consultation-feed-title">
           <div className="admin-consultation-feed__head">
             <div>
               <span className="admin-section-chip admin-section-chip--cyan">Live stream</span>
@@ -375,7 +451,7 @@ export default function AdminPanel() {
           )}
         </section>
 
-        <section className="admin-users-shell admin-reveal admin-reveal--3" aria-label="Registered users">
+        <section className="admin-users-shell admin-reveal admin-reveal--4" aria-label="Registered users">
           <div className="admin-users-shell-accent" aria-hidden="true" />
           <div className="admin-users-head">
             <div>
@@ -465,82 +541,6 @@ export default function AdminPanel() {
               </table>
             </div>
           )}
-        </section>
-
-        <section className="admin-page-section admin-faculty-section admin-reveal admin-reveal--4" aria-labelledby="admin-faculty-title">
-          <header className="admin-faculty-head">
-            <span className="admin-section-chip admin-section-chip--violet">Clinical network</span>
-            <h2 id="admin-faculty-title" className="admin-faculty-title">Physician faculty</h2>
-            <p className="admin-faculty-sub">Featured specialists across orthopedics and vision care</p>
-          </header>
-
-          <div className="admin-faculty-grid admin-faculty-grid--spotlight">
-            <article className="doctor-spotlight doctor-spotlight--ortho" aria-labelledby="doctor-orthopedic-heading">
-              <div className="doctor-spotlight__banner">
-                <div className="doctor-spotlight__portrait-stage">
-                  <div className="doctor-spotlight__portrait-ring" aria-hidden="true" />
-                  <div className="doctor-spotlight__portrait-shine" aria-hidden="true" />
-                  <img
-                    src={adminSpotlightPortrait}
-                    alt={`${ORTHOPEDIC_DOCTOR.name}, ${ORTHOPEDIC_DOCTOR.title}`}
-                    className="doctor-spotlight__photo"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-                <div className="doctor-spotlight__banner-overlay" aria-hidden />
-                <span className="doctor-spotlight__tag">🦴 Orthopedic</span>
-              </div>
-              <div className="doctor-spotlight__content">
-                <h3 id="doctor-orthopedic-heading" className="doctor-spotlight__name">{ORTHOPEDIC_DOCTOR.name}</h3>
-                <p className="doctor-spotlight__role">{ORTHOPEDIC_DOCTOR.title}</p>
-                <p className="doctor-spotlight__quals">{ORTHOPEDIC_DOCTOR.qualificationLine}</p>
-                <p className="doctor-spotlight__bio">{ORTHOPEDIC_DOCTOR.bio}</p>
-                <ul className="doctor-spotlight__stats">
-                  <li><strong>{ORTHOPEDIC_DOCTOR.experienceYears}+</strong><span>Years</span></li>
-                  <li><strong>FCPS</strong><span>Board</span></li>
-                  <li><strong>Mon–Sat</strong><span>Available</span></li>
-                </ul>
-                <div className="doctor-spotlight__footer">
-                  <span className="doctor-spotlight__chip">🏥 {ORTHOPEDIC_DOCTOR.hospital}</span>
-                  <span className="doctor-spotlight__chip doctor-spotlight__chip--time">🕐 {ORTHOPEDIC_DOCTOR.availability}</span>
-                </div>
-              </div>
-            </article>
-
-            <article className="doctor-spotlight doctor-spotlight--vision" aria-labelledby="doctor-ophthalmology-heading">
-              <div className="doctor-spotlight__banner">
-                <div className="doctor-spotlight__portrait-stage">
-                  <div className="doctor-spotlight__portrait-ring doctor-spotlight__portrait-ring--vision" aria-hidden="true" />
-                  <div className="doctor-spotlight__portrait-shine doctor-spotlight__portrait-shine--vision" aria-hidden="true" />
-                  <img
-                    src={adminDoctor2Portrait}
-                    alt={`${OPHTHALMOLOGY_DOCTOR.name}, ${OPHTHALMOLOGY_DOCTOR.title}`}
-                    className="doctor-spotlight__photo"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-                <div className="doctor-spotlight__banner-overlay doctor-spotlight__banner-overlay--vision" aria-hidden />
-                <span className="doctor-spotlight__tag doctor-spotlight__tag--vision">👁 Ophthalmology</span>
-              </div>
-              <div className="doctor-spotlight__content">
-                <h3 id="doctor-ophthalmology-heading" className="doctor-spotlight__name">{OPHTHALMOLOGY_DOCTOR.name}</h3>
-                <p className="doctor-spotlight__role">{OPHTHALMOLOGY_DOCTOR.title}</p>
-                <p className="doctor-spotlight__quals">{OPHTHALMOLOGY_DOCTOR.qualificationLine}</p>
-                <p className="doctor-spotlight__bio">{OPHTHALMOLOGY_DOCTOR.bio}</p>
-                <ul className="doctor-spotlight__stats doctor-spotlight__stats--vision">
-                  <li><strong>LUMHS</strong><span>Jamshoro</span></li>
-                  <li><strong>MBBS</strong><span>Degree</span></li>
-                  <li><strong>JPMC</strong><span>Fellowship</span></li>
-                </ul>
-                <div className="doctor-spotlight__footer">
-                  <span className="doctor-spotlight__chip doctor-spotlight__chip--vision">🎓 {OPHTHALMOLOGY_DOCTOR.education}</span>
-                  <span className="doctor-spotlight__chip doctor-spotlight__chip--vision">👁 {OPHTHALMOLOGY_DOCTOR.fellowship}</span>
-                </div>
-              </div>
-            </article>
-          </div>
         </section>
       </div>
     </div>
