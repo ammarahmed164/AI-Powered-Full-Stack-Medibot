@@ -4,7 +4,7 @@
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
-  isolation: isolate;
+  overflow-y: visible;
   color: #e2e8f0;
   background-color: #070b14;
   background-image:
@@ -24,7 +24,7 @@
     linear-gradient(90deg, rgba(148, 163, 184, 0.06) 1px, transparent 1px);
   background-size: 48px 48px;
   mask-image: radial-gradient(ellipse 85% 70% at 50% 35%, black 20%, transparent 70%);
-  animation: meshDrift 45s linear infinite;
+  animation: none;
 }
 
 @keyframes meshDrift {
@@ -51,7 +51,7 @@
   right: -8rem;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(59, 130, 246, 0.18) 0%, transparent 70%);
-  animation: adminFloat 18s ease-in-out infinite;
+  animation: none;
 }
 
 .admin-simple-bg::after {
@@ -63,15 +63,16 @@
   left: -10rem;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(124, 58, 237, 0.16) 0%, transparent 70%);
-  animation: adminFloat 22s ease-in-out infinite reverse;
+  animation: none;
 }
 
 .admin-orb {
   position: absolute;
   border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.22;
+  filter: blur(48px);
+  opacity: 0.14;
   pointer-events: none;
+  animation: none;
 }
 
 .admin-orb-1 {
@@ -80,7 +81,6 @@
   background: #6366f1;
   top: 40%;
   right: 5%;
-  animation: adminFloat 24s ease-in-out infinite;
 }
 
 .admin-orb-2 {
@@ -89,7 +89,6 @@
   background: #0ea5e9;
   bottom: 15%;
   left: 8%;
-  animation: adminFloat 20s ease-in-out infinite reverse;
 }
 
 .admin-orb-3 {
@@ -98,8 +97,7 @@
   background: #a855f7;
   top: 8%;
   left: 12%;
-  animation: adminFloat 26s ease-in-out infinite;
-  opacity: 0.16;
+  opacity: 0.12;
 }
 
 @keyframes adminFloat {
@@ -118,7 +116,7 @@
   margin: 0 auto;
   padding: clamp(1.25rem, 4vw, 2rem);
   padding-bottom: clamp(2rem, 5vw, 3.5rem);
-  min-height: 100vh;
+  min-height: auto;
   display: flex;
   flex-direction: column;
   gap: clamp(1.25rem, 2.5vw, 1.75rem);
@@ -157,9 +155,8 @@
 .admin-top-glass {
   padding: 1rem 1.25rem;
   border-radius: 1.25rem;
-  background: rgba(15, 23, 42, 0.45);
+  background: rgba(15, 23, 42, 0.88);
   border: 1px solid rgba(148, 163, 184, 0.14);
-  backdrop-filter: blur(20px);
   box-shadow:
     0 24px 48px rgba(0, 0, 0, 0.25),
     0 0 0 1px rgba(255, 255, 255, 0.04) inset;
@@ -175,8 +172,7 @@
   right: 0;
   height: 2px;
   background: linear-gradient(90deg, transparent, #818cf8, #22d3ee, #c084fc, transparent);
-  background-size: 200% 100%;
-  animation: topBarShine 5s ease-in-out infinite;
+  animation: none;
 }
 
 @keyframes topBarShine {
@@ -210,7 +206,7 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: titleShimmer 10s ease-in-out infinite;
+  animation: none;
 }
 
 .admin-title-accent {
@@ -252,7 +248,7 @@
   border-radius: 50%;
   background: #4ade80;
   box-shadow: 0 0 10px #4ade80;
-  animation: liveBlink 2s ease-in-out infinite;
+  animation: none;
 }
 
 @keyframes liveBlink {
@@ -315,7 +311,7 @@
 }
 
 .admin-reveal {
-  animation: revealUp 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: revealUp 0.45s ease both;
 }
 
 .admin-reveal--2 {
@@ -333,13 +329,11 @@
 @keyframes revealUp {
   from {
     opacity: 0;
-    transform: translateY(18px);
-    filter: blur(4px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
-    filter: blur(0);
   }
 }
 
@@ -847,9 +841,8 @@
   overflow: visible;
   border-radius: 1.35rem;
   padding: clamp(1.25rem, 3vw, 1.85rem);
-  background: rgba(15, 23, 42, 0.55);
+  background: rgba(15, 23, 42, 0.88);
   border: 1px solid rgba(148, 163, 184, 0.14);
-  backdrop-filter: blur(18px);
   box-shadow:
     0 24px 64px rgba(0, 0, 0, 0.3),
     0 0 0 1px rgba(255, 255, 255, 0.03) inset;
@@ -1007,9 +1000,8 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  max-height: min(70vh, 720px);
-  overflow-y: auto;
-  padding-right: 0.25rem;
+  overflow: visible;
+  padding-right: 0;
 }
 
 .admin-consultation-card {
@@ -1116,8 +1108,7 @@
 }
 
 .admin-chat-thread--inline {
-  max-height: 320px;
-  overflow-y: auto;
+  overflow: visible;
   padding-top: 0.85rem;
 }
 
@@ -1254,7 +1245,7 @@
   background: radial-gradient(circle, rgba(165, 180, 252, 0.35) 0%, transparent 68%);
   pointer-events: none;
   z-index: 1;
-  animation: doctorPortraitShine 5s ease-in-out infinite;
+  animation: none;
 }
 
 .doctor-spotlight__portrait-shine--vision {
@@ -2517,6 +2508,33 @@
   .admin-users-table {
     min-width: 640px;
   }
+}
+
+/* Admin page — document scroll & lighter rendering */
+html:has(.admin-simple),
+body:has(.admin-simple) {
+  overflow-y: auto;
+  height: auto;
+  scroll-behavior: auto;
+  overscroll-behavior-y: auto;
+}
+
+.main-content:has(.admin-simple) {
+  overflow: visible;
+  min-height: 0;
+}
+
+.admin-simple {
+  touch-action: pan-y;
+}
+
+.admin-consultation-card {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 5.5rem;
+}
+
+.admin-consultation-card.is-open {
+  contain-intrinsic-size: auto 24rem;
 }
 
 @media (prefers-reduced-motion: reduce) {
