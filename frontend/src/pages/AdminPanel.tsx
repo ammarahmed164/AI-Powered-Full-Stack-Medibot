@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import MediBotLogo from '../components/MediBotLogo'
 import adminSpotlightPortrait from '../assets/admin-orthopedic-spotlight.png'
+import adminDoctor2Portrait from '../assets/Admin-Doctor2.jpeg'
 import './AdminPanel.css'
 
-const FEATURED_DOCTOR = {
+const ORTHOPEDIC_DOCTOR = {
   name: 'Dr Syed Umar Rafiq',
   title: 'Consultant Orthopedic Surgeon',
   qualificationLine: 'MBBS · FCPS',
@@ -12,6 +13,15 @@ const FEATURED_DOCTOR = {
   experienceYears: 12,
   hospital: 'MediCare Orthopedic & Trauma Center',
   availability: 'Mon – Sat, 10:00 AM – 7:00 PM',
+}
+
+const OPHTHALMOLOGY_DOCTOR = {
+  name: 'Dr Suraj Kumar',
+  title: 'Ophthalmology Fellow',
+  qualificationLine: 'MBBS',
+  education: 'LUMHS Jamshoro',
+  fellowship: 'JPMC — Ophthalmology',
+  bio: 'Advancing vision care through ophthalmology fellowship training — focused on eye health, clinical diagnosis, and patient-centered visual rehabilitation.',
 }
 
 export default function AdminPanel() {
@@ -164,51 +174,121 @@ export default function AdminPanel() {
         </header>
 
         <div className="admin-hero">
-          <section className="doctor-showcase doctor-showcase--hero admin-reveal admin-reveal--1" aria-labelledby="doctor-showcase-heading">
-            <article className="doctor-premium-card doctor-premium-card--with-photo">
-              <div className="doctor-premium-card__glow" aria-hidden />
-              <div className="doctor-premium-card__visual">
-                <div className="doctor-premium-photo-stage" aria-hidden="true">
-                  <div className="doctor-premium-photo-ring" />
-                  <img
-                    src={adminSpotlightPortrait}
-                    alt={`${FEATURED_DOCTOR.name}, ${FEATURED_DOCTOR.title}`}
-                    className="doctor-premium-photo"
-                    width={560}
-                    height={700}
-                    loading="eager"
-                    decoding="async"
-                    draggable={false}
-                  />
-                </div>
-                <span className="doctor-premium-visual-chip">Physician spotlight</span>
-              </div>
-              <div className="doctor-premium-card__body">
-                <h2 id="doctor-showcase-heading" className="doctor-premium-name">
-                  {FEATURED_DOCTOR.name}
-                </h2>
-                <p className="doctor-premium-badge">{FEATURED_DOCTOR.title}</p>
-                <p className="doctor-premium-quals">{FEATURED_DOCTOR.qualificationLine}</p>
-                <p className="doctor-premium-bio">{FEATURED_DOCTOR.bio}</p>
-                <dl className="doctor-premium-meta">
-                  <div>
-                    <dt>Experience</dt>
-                    <dd>{FEATURED_DOCTOR.experienceYears}+ years</dd>
-                  </div>
-                  <div>
-                    <dt>Hospital</dt>
-                    <dd>{FEATURED_DOCTOR.hospital}</dd>
-                  </div>
-                  <div>
-                    <dt>Availability</dt>
-                    <dd>{FEATURED_DOCTOR.availability}</dd>
-                  </div>
-                </dl>
-              </div>
-            </article>
-          </section>
+          <header className="admin-faculty-head admin-reveal admin-reveal--1">
+            <span className="admin-section-chip">Clinical network</span>
+            <h2 className="admin-faculty-title">Physician faculty</h2>
+            <p className="admin-faculty-sub">
+              Featured specialists across orthopedics and vision care
+            </p>
+          </header>
 
-          <div className="admin-stats-wrap admin-reveal admin-reveal--2" role="region" aria-label="Platform statistics">
+          <div className="admin-faculty-grid">
+            <section
+              className="doctor-showcase doctor-showcase--orthopedic admin-reveal admin-reveal--1"
+              aria-labelledby="doctor-orthopedic-heading"
+            >
+              <div className="doctor-section-label doctor-section-label--bone">
+                <span className="doctor-section-label__icon" aria-hidden="true">🦴</span>
+                Orthopedic excellence
+              </div>
+              <article className="doctor-premium-card doctor-premium-card--with-photo">
+                <div className="doctor-premium-card__glow" aria-hidden />
+                <div className="doctor-premium-card__visual">
+                  <div className="doctor-premium-photo-stage" aria-hidden="true">
+                    <div className="doctor-premium-photo-ring" />
+                    <img
+                      src={adminSpotlightPortrait}
+                      alt={`${ORTHOPEDIC_DOCTOR.name}, ${ORTHOPEDIC_DOCTOR.title}`}
+                      className="doctor-premium-photo"
+                      width={560}
+                      height={700}
+                      loading="eager"
+                      decoding="async"
+                      draggable={false}
+                    />
+                  </div>
+                  <span className="doctor-premium-visual-chip">Physician spotlight</span>
+                </div>
+                <div className="doctor-premium-card__body">
+                  <h3 id="doctor-orthopedic-heading" className="doctor-premium-name">
+                    {ORTHOPEDIC_DOCTOR.name}
+                  </h3>
+                  <p className="doctor-premium-badge">{ORTHOPEDIC_DOCTOR.title}</p>
+                  <p className="doctor-premium-quals">{ORTHOPEDIC_DOCTOR.qualificationLine}</p>
+                  <p className="doctor-premium-bio">{ORTHOPEDIC_DOCTOR.bio}</p>
+                  <dl className="doctor-premium-meta">
+                    <div>
+                      <dt>Experience</dt>
+                      <dd>{ORTHOPEDIC_DOCTOR.experienceYears}+ years</dd>
+                    </div>
+                    <div>
+                      <dt>Hospital</dt>
+                      <dd>{ORTHOPEDIC_DOCTOR.hospital}</dd>
+                    </div>
+                    <div>
+                      <dt>Availability</dt>
+                      <dd>{ORTHOPEDIC_DOCTOR.availability}</dd>
+                    </div>
+                  </dl>
+                </div>
+              </article>
+            </section>
+
+            <section
+              className="doctor-showcase doctor-showcase--ophthalmology admin-reveal admin-reveal--2"
+              aria-labelledby="doctor-ophthalmology-heading"
+            >
+              <div className="doctor-section-label doctor-section-label--vision">
+                <span className="doctor-section-label__icon" aria-hidden="true">👁</span>
+                Vision &amp; ophthalmology
+              </div>
+              <article className="doctor-vision-card doctor-vision-card--with-photo">
+                <div className="doctor-vision-card__glow" aria-hidden />
+                <div className="doctor-vision-card__mesh" aria-hidden />
+                <div className="doctor-vision-card__body">
+                  <h3 id="doctor-ophthalmology-heading" className="doctor-vision-name">
+                    {OPHTHALMOLOGY_DOCTOR.name}
+                  </h3>
+                  <p className="doctor-vision-badge">{OPHTHALMOLOGY_DOCTOR.title}</p>
+                  <p className="doctor-vision-quals">{OPHTHALMOLOGY_DOCTOR.qualificationLine}</p>
+                  <p className="doctor-vision-bio">{OPHTHALMOLOGY_DOCTOR.bio}</p>
+                  <dl className="doctor-vision-meta">
+                    <div>
+                      <dt>Education</dt>
+                      <dd>{OPHTHALMOLOGY_DOCTOR.education}</dd>
+                    </div>
+                    <div>
+                      <dt>Qualification</dt>
+                      <dd>{OPHTHALMOLOGY_DOCTOR.qualificationLine}</dd>
+                    </div>
+                    <div>
+                      <dt>Current fellowship</dt>
+                      <dd>{OPHTHALMOLOGY_DOCTOR.fellowship}</dd>
+                    </div>
+                  </dl>
+                </div>
+                <div className="doctor-vision-card__visual">
+                  <div className="doctor-vision-photo-stage" aria-hidden="true">
+                    <div className="doctor-vision-photo-ring" />
+                    <div className="doctor-vision-photo-flare" aria-hidden />
+                    <img
+                      src={adminDoctor2Portrait}
+                      alt={`${OPHTHALMOLOGY_DOCTOR.name}, ${OPHTHALMOLOGY_DOCTOR.title}`}
+                      className="doctor-vision-photo"
+                      width={560}
+                      height={700}
+                      loading="lazy"
+                      decoding="async"
+                      draggable={false}
+                    />
+                  </div>
+                  <span className="doctor-vision-visual-chip">Vision care fellow</span>
+                </div>
+              </article>
+            </section>
+          </div>
+
+          <div className="admin-stats-wrap admin-reveal admin-reveal--3" role="region" aria-label="Platform statistics">
             <div className="admin-stats-head-row">
               <h2 className="admin-stats-heading">Pulse board</h2>
               <span className="admin-stats-hint">Real-time</span>
@@ -245,7 +325,7 @@ export default function AdminPanel() {
           </div>
         </div>
 
-        <section className="admin-users-shell admin-reveal admin-reveal--3" aria-label="Registered users">
+        <section className="admin-users-shell admin-reveal admin-reveal--4" aria-label="Registered users">
           <div className="admin-users-shell-accent" aria-hidden="true" />
           <div className="admin-users-head">
             <div>
