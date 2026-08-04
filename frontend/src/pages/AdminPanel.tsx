@@ -173,10 +173,50 @@ export default function AdminPanel() {
           </button>
         </header>
 
-        <div className="admin-hero">
-          <header className="admin-faculty-head admin-reveal admin-reveal--1">
+        <section
+          className="admin-stats-wrap admin-stats-wrap--bar admin-reveal admin-reveal--1"
+          role="region"
+          aria-label="Platform statistics"
+        >
+          <div className="admin-stats-head-row">
+            <h2 className="admin-stats-heading">Pulse board</h2>
+            <span className="admin-stats-hint">Real-time</span>
+          </div>
+          <div className="admin-stats-grid admin-stats-grid--horizontal">
+            <div className="admin-stat-card admin-stat-card--purple">
+              <div className="admin-stat-icon" aria-hidden="true">
+                👥
+              </div>
+              <div>
+                <span className="admin-stat-label">Total users</span>
+                <span className="admin-stat-value">{loading ? '—' : stats.total_users}</span>
+              </div>
+            </div>
+            <div className="admin-stat-card admin-stat-card--green">
+              <div className="admin-stat-icon" aria-hidden="true">
+                ✅
+              </div>
+              <div>
+                <span className="admin-stat-label">Active users</span>
+                <span className="admin-stat-value">{loading ? '—' : stats.active_users}</span>
+              </div>
+            </div>
+            <div className="admin-stat-card admin-stat-card--blue">
+              <div className="admin-stat-icon" aria-hidden="true">
+                💬
+              </div>
+              <div>
+                <span className="admin-stat-label">Consultations</span>
+                <span className="admin-stat-value">{loading ? '—' : stats.total_consultations}</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="admin-page-section admin-faculty-section admin-reveal admin-reveal--2" aria-labelledby="admin-faculty-title">
+          <header className="admin-faculty-head">
             <span className="admin-section-chip">Clinical network</span>
-            <h2 className="admin-faculty-title">Physician faculty</h2>
+            <h2 id="admin-faculty-title" className="admin-faculty-title">Physician faculty</h2>
             <p className="admin-faculty-sub">
               Featured specialists across orthopedics and vision care
             </p>
@@ -184,7 +224,7 @@ export default function AdminPanel() {
 
           <div className="admin-faculty-grid">
             <section
-              className="doctor-showcase doctor-showcase--orthopedic admin-reveal admin-reveal--1"
+              className="doctor-showcase doctor-showcase--orthopedic"
               aria-labelledby="doctor-orthopedic-heading"
             >
               <div className="doctor-section-label doctor-section-label--bone">
@@ -235,7 +275,7 @@ export default function AdminPanel() {
             </section>
 
             <section
-              className="doctor-showcase doctor-showcase--ophthalmology admin-reveal admin-reveal--2"
+              className="doctor-showcase doctor-showcase--ophthalmology"
               aria-labelledby="doctor-ophthalmology-heading"
             >
               <div className="doctor-section-label doctor-section-label--vision">
@@ -287,45 +327,9 @@ export default function AdminPanel() {
               </article>
             </section>
           </div>
+        </section>
 
-          <div className="admin-stats-wrap admin-reveal admin-reveal--3" role="region" aria-label="Platform statistics">
-            <div className="admin-stats-head-row">
-              <h2 className="admin-stats-heading">Pulse board</h2>
-              <span className="admin-stats-hint">Real-time</span>
-            </div>
-            <div className="admin-stats-grid">
-              <div className="admin-stat-card admin-stat-card--purple">
-                <div className="admin-stat-icon" aria-hidden="true">
-                  👥
-                </div>
-                <div>
-                  <span className="admin-stat-label">Total users</span>
-                  <span className="admin-stat-value">{loading ? '—' : stats.total_users}</span>
-                </div>
-              </div>
-              <div className="admin-stat-card admin-stat-card--green">
-                <div className="admin-stat-icon" aria-hidden="true">
-                  ✅
-                </div>
-                <div>
-                  <span className="admin-stat-label">Active users</span>
-                  <span className="admin-stat-value">{loading ? '—' : stats.active_users}</span>
-                </div>
-              </div>
-              <div className="admin-stat-card admin-stat-card--blue">
-                <div className="admin-stat-icon" aria-hidden="true">
-                  💬
-                </div>
-                <div>
-                  <span className="admin-stat-label">Consultations</span>
-                  <span className="admin-stat-value">{loading ? '—' : stats.total_consultations}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <section className="admin-users-shell admin-reveal admin-reveal--4" aria-label="Registered users">
+        <section className="admin-users-shell admin-reveal admin-reveal--3" aria-label="Registered users">
           <div className="admin-users-shell-accent" aria-hidden="true" />
           <div className="admin-users-head">
             <div>
